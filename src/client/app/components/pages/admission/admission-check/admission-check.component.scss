@@ -1,0 +1,15 @@
+.video-area {
+    height: 25vh;
+    overflow: hidden;
+}
+
+.flash-text {
+    animation-duration: 3s;
+    animation-fill-mode: both;
+    animation-name: flash-text;
+}
+
+@keyframes flash-text {
+    from, 20%, 40%, 60%, 80%, to { color: #FFF; }
+    10%, 30%, 50%, 70%, 90% { color: transparent; }
+}
