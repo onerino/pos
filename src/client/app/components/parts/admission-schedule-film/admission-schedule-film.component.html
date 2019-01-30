@@ -25,19 +25,21 @@
           'bg-gray text-light-gray': !(moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix())
           }"
             (click)="select.emit(screeningEvent)">
-            <div class="mb-md-2 text-small">
-                {{ screeningEvent.location.name.ja }}
-            </div>
             <div>
-                <strong class="text-large">{{ moment(screeningEvent.startDate).format('HH:mm') }}</strong>
-                <span>-</span>
-                <span>{{ moment(screeningEvent.endDate).format('HH:mm') }}</span>
+                <div class="mb-2 text-small">
+                    {{ screeningEvent.location.name.ja }}
+                </div>
+                <div>
+                    <strong class="text-large">{{ moment(screeningEvent.startDate).format('HH:mm') }}</strong>
+                    <span>-</span>
+                    <span>{{ moment(screeningEvent.endDate).format('HH:mm') }}</span>
+                </div>
             </div>
             <hr class="border-0 bg-light-gray my-2">
             <div class="text-center">
-                <div class="status mb-2" *ngIf="moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix()">
-                    <div *ngIf="!(moment(screeningEvent.startDate).unix() < moment().unix())">開場中</div>
-                    <div *ngIf="moment(screeningEvent.startDate).unix() < moment().unix()">上映中</div>
+                <div *ngIf="moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix()">
+                    <div class="status mb-2" *ngIf="!(moment(screeningEvent.startDate).unix() < moment().unix())">開場中</div>
+                    <div class="status mb-2" *ngIf="moment(screeningEvent.startDate).unix() < moment().unix()">上映中</div>
                 </div>
 
                 <div class="status mb-2" *ngIf="!(moment(screeningEvent.doorTime).unix() < moment().unix())">開場前</div>
