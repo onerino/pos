@@ -54,10 +54,10 @@ export class InquiryEffects {
         mergeMap(async (payload) => {
             try {
                 const order = payload.order;
-                const ipAddress = payload.ipAddress;
+                const printer = payload.printer;
                 const pos = payload.pos;
                 const timeout = 60000;
-                this.starPrint.initialize({ ipAddress, pos, timeout });
+                this.starPrint.initialize({ printer, pos, timeout });
                 let printerRequests;
                 if (order === undefined) {
                     printerRequests = await this.starPrint.createPrinterTestRequest();

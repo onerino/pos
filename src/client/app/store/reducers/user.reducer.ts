@@ -6,7 +6,10 @@ export interface IUserState {
     movieTheater?: factory.organization.IOrganization<factory.organizationType.MovieTheater>;
     pos?: factory.organization.IPOS;
     customerContact?: factory.transaction.placeOrder.ICustomerContact;
-    printer?: { ipAddress: string; };
+    printer?: {
+        ipAddress: string;
+        id: string;
+    };
 }
 
 export const userInitialState: IUserState = {};

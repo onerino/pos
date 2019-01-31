@@ -102,15 +102,28 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
+                        <p class="col-md-4 py-2 text-md-right">プリンター</p>
+                        <div class="col-md-8">
+                            <select class="form-control" formControlName="printerId">
+                                <option value="">選択してください</option>
+                                <option *ngFor="let printer of printers" [value]="printer.id">{{ printer.name.ja }}</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-primary py-2 mt-2" (click)="print()">テスト印刷</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
                         <p class="col-md-4 py-2 text-md-right">プリンターIPアドレス</p>
                         <div class="col-md-8">
                             <input type="text" class="form-control" formControlName="printerIpAddress" placeholder="0.0.0.0">
                             <div *ngIf="settingForm.controls.printerIpAddress.invalid && settingForm.controls.printerIpAddress.touched"
                                 class="mt-2">
                                 <p *ngIf="settingForm.controls.printerIpAddress.errors.required" class="text-danger">プリンターIPアドレスが未入力です</p>
-                                <p *ngIf="settingForm.controls.printerIpAddress.errors.pattern" class="text-danger">プリンターIPアドレスが正しくありません</p>
                             </div>
-                            <button type="button" class="btn btn-sm btn-primary py-2 mt-2" (click)="print()">テスト印刷</button>
+                            <p class="text-small mt-2">
+                                ※スター精密 Bluetooth接続(StarwebPRNT専用ブラウザー)の場合localhost:8001を設定してください。
+                            </p>
                         </div>
                     </div>
                 </div>

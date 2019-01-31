@@ -3,6 +3,7 @@ import { factory } from '@cinerino/api-javascript-client';
 import * as moment from 'moment';
 import * as qrcode from 'qrcode';
 import { getTicketPrice } from '../functions';
+import { connectionType, IPrinter, printers } from '../models';
 import { CinerinoService } from './cinerino.service';
 
 @Injectable({
@@ -34,7 +35,7 @@ export class StarPrintService {
      * 初期化
      */
     public initialize(args: {
-        ipAddress: string;
+        printer: IPrinter;
         pos?: factory.organization.IPOS;
         timeout?: number;
     }) {
@@ -42,12 +43,22 @@ export class StarPrintService {
         this.builder = new (<any>window).StarWebPrintBuilder();
         this.isReady = false;
 
+        const printer = args.printer;
+
         try {
-            if (args.ipAddress === '') {
+            if (printer.ipAddress === '') {
                 throw new Error('プリンターのIPアドレスが正しく指定されていません');
             }
             const port = /https/.test(window.location.protocol) ? 443 : 80;
-            const url = `//${args.ipAddress}:${port}/StarWebPRNT/SendMessage`;
+            const findResult = printers.find(p => p.id === printer.id);
+            if (findResult === undefined
+                || (findResult.id !== '001' && findResult.id !== '002')
+            ) {
+                throw new Error('選択しているプリンターに対応していません');
+            }
+            const url = (findResult.connectionType === connectionType.LAN)
+                ? `https://${printer.ipAddress}:${port}/StarWebPRNT/SendMessage`
+                : `https://${printer.ipAddress}/StarWebPRNT/SendMessage`;
             const papertype = 'normal';
             const blackmark_sensor = 'front_side';
             // trader設定

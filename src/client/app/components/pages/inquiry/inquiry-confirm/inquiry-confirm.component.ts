@@ -59,8 +59,8 @@ export class InquiryConfirmComponent implements OnInit {
                 }
                 const order = inquiry.order;
                 const pos = user.pos;
-                const ipAddress = user.printer.ipAddress;
-                this.store.dispatch(new Print({ order, pos, ipAddress }));
+                const printer = user.printer;
+                this.store.dispatch(new Print({ order, pos, printer }));
             }).unsubscribe();
         }).unsubscribe();
 
@@ -72,10 +72,16 @@ export class InquiryConfirmComponent implements OnInit {
         const fail = this.actions.pipe(
             ofType(ActionTypes.PrintFail),
             tap(() => {
-                this.openAlert({
-                    title: 'エラー',
-                    body: '印刷に失敗しました'
-                });
+                this.error.subscribe((error) => {
+                    this.openAlert({
+                        title: 'エラー',
+                        body: `
+                        <p class="mb-4">印刷に失敗しました</p>
+                            <div class="p-3 bg-light-gray select-text">
+                            <code>${error}</code>
+                        </div>`
+                    });
+                }).unsubscribe();
             })
         );
         race(success, fail).pipe(take(1)).subscribe();

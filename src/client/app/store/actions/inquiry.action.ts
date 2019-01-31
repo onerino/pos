@@ -1,5 +1,6 @@
 import { factory } from '@cinerino/api-javascript-client';
 import { Action } from '@ngrx/store';
+import { IPrinter } from '../../models';
 
 /**
  * Action types
@@ -65,7 +66,7 @@ export class Print implements Action {
     public readonly type = ActionTypes.Print;
     constructor(public payload: {
         order?: factory.order.IOrder;
-        ipAddress: string;
+        printer: IPrinter;
         pos?: factory.organization.IPOS;
         timeout?: number;
     }) { }

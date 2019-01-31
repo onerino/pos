@@ -7,6 +7,7 @@ import { select, Store } from '@ngrx/store';
 import * as libphonenumber from 'libphonenumber-js';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { printers } from '../../../models';
 import { LibphonenumberFormatPipe } from '../../../pipes/libphonenumber-format.pipe';
 import * as inquiryAction from '../../../store/actions/inquiry.action';
 import * as masterAction from '../../../store/actions/master.action';
@@ -25,6 +26,7 @@ export class SettingComponent implements OnInit {
     public master: Observable<reducers.IMasterState>;
     public error: Observable<string | null>;
     public posList: { id: string; name: string; typeOf: string; }[];
+    public printers: typeof printers = printers;
     constructor(
         private actions: Actions,
         private formBuilder: FormBuilder,
@@ -91,10 +93,8 @@ export class SettingComponent implements OnInit {
                     return null;
                 }
             ]],
-            printerIpAddress: ['', [
-                Validators.required,
-                Validators.pattern(/^([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)$/)
-            ]]
+            printerId: [''],
+            printerIpAddress: ['', [Validators.required]]
         });
         this.user.subscribe((user) => {
             if (user.movieTheater !== undefined) {
@@ -111,6 +111,7 @@ export class SettingComponent implements OnInit {
                 this.settingForm.controls.telephone.setValue(new LibphonenumberFormatPipe().transform(user.customerContact.telephone));
             }
             if (user.printer !== undefined) {
+                this.settingForm.controls.printerId.setValue(user.printer.id);
                 this.settingForm.controls.printerIpAddress.setValue(user.printer.ipAddress);
             }
         }).unsubscribe();
@@ -161,7 +162,11 @@ export class SettingComponent implements OnInit {
         if (this.settingForm.invalid) {
             this.openAlert({
                 title: 'エラー',
-                body: '入力内容に誤りがあります。'
+                body: `
+                    <p class="mb-4">入力内容に誤りがあります。</p>
+                        <div class="p-3 bg-light-gray select-text">
+                        <code>${JSON.stringify(this.settingForm.errors)}</code>
+                    </div>`
             });
             return;
         }
@@ -188,7 +193,8 @@ export class SettingComponent implements OnInit {
                     telephone: this.settingForm.controls.telephone.value
                 },
                 printer: {
-                    ipAddress: this.settingForm.controls.printerIpAddress.value
+                    ipAddress: this.settingForm.controls.printerIpAddress.value,
+                    id: this.settingForm.controls.printerId.value
                 }
             }));
             this.openAlert({
@@ -201,8 +207,11 @@ export class SettingComponent implements OnInit {
     }
 
     public print() {
-        const ipAddress = this.settingForm.controls.printerIpAddress.value;
-        this.store.dispatch(new inquiryAction.Print({ ipAddress }));
+        const printer = {
+            id: this.settingForm.controls.printerId.value,
+            ipAddress: this.settingForm.controls.printerIpAddress.value
+        };
+        this.store.dispatch(new inquiryAction.Print({ printer }));
 
         const success = this.actions.pipe(
             ofType(inquiryAction.ActionTypes.PrintSuccess),
@@ -212,15 +221,14 @@ export class SettingComponent implements OnInit {
         const fail = this.actions.pipe(
             ofType(inquiryAction.ActionTypes.PrintFail),
             tap(() => {
-                this.error.subscribe((json) => {
-                    let message = '印刷に失敗しました';
-                    if (json !== null) {
-                        const error = JSON.parse(json);
-                        message = error.message;
-                    }
+                this.error.subscribe((error) => {
                     this.openAlert({
                         title: 'エラー',
-                        body: message
+                        body: `
+                        <p class="mb-4">印刷に失敗しました</p>
+                            <div class="p-3 bg-light-gray select-text">
+                            <code>${error}</code>
+                        </div>`
                     });
                 }).unsubscribe();
             })

@@ -1,5 +1,6 @@
 import { factory } from '@cinerino/api-javascript-client';
 import { Action } from '@ngrx/store';
+import { IPrinter } from '../../models';
 
 /**
  * Action types
@@ -26,7 +27,7 @@ export class UpdateAll implements Action {
         movieTheater: factory.organization.IOrganization<factory.organizationType.MovieTheater>;
         pos: any;
         customerContact: factory.transaction.placeOrder.ICustomerContact;
-        printer: { ipAddress: string; };
+        printer: IPrinter;
     }) { }
 }
 
