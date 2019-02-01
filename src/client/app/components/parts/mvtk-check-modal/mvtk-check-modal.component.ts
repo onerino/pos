@@ -137,6 +137,10 @@ export class MvtkCheckModalComponent implements OnInit, OnDestroy {
     }
 
     public async activationCamera() {
+        if (navigator.mediaDevices === undefined
+            || navigator.mediaDevices.getUserMedia === undefined) {
+            alert('カメラへのアクセスがサポートされていません。');
+        }
         try {
             const constraints = {
                 audio: false,

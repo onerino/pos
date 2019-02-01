@@ -64,6 +64,10 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
     }
 
     public async start() {
+        if (navigator.mediaDevices === undefined
+            || navigator.mediaDevices.getUserMedia === undefined) {
+            alert('カメラへのアクセスがサポートされていません。');
+        }
         try {
             this.inputCode = '';
             const constraints = {

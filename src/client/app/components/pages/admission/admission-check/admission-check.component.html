@@ -1,9 +1,9 @@
 <div class="contents-width mx-auto px-3 pt-5">
-    <h2 class="text-large mb-4 text-center"><strong>入場確認</strong></h2>
+    <h2 class="text-large mb-4 text-center font-weight-bold">入場確認</h2>
     <p class="mb-4">入場を確認してください</p>
 </div>
 
-<div [class.d-block]="isShowVideo" [class.d-none]="!isShowVideo">
+<div class="mb-4" [class.d-block]="isShowVideo" [class.d-none]="!isShowVideo">
     <div class="d-flex align-items-center video-area"><video id="video" class="bg-black" src="" autoplay muted
             playsinline></video></div>
     <div class="d-none"><canvas id="canvas"></canvas></div>
