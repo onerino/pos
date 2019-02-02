@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as inquiry from '../../../../store/actions/inquiry.action';
-import * as purchase from '../../../../store/actions/purchase.action';
+import * as orderAction from '../../../../store/actions/order.action';
+import * as purchaseAction from '../../../../store/actions/purchase.action';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -18,8 +18,8 @@ export class AuthSigninComponent implements OnInit {
     ) { }
 
     public ngOnInit() {
-        this.store.dispatch(new purchase.Delete());
-        this.store.dispatch(new inquiry.Delete());
+        this.store.dispatch(new orderAction.Delete());
+        this.store.dispatch(new purchaseAction.Delete());
         this.router.navigate(['/purchase/schedule']);
     }
 

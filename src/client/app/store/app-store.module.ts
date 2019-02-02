@@ -3,7 +3,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import {
     AdmissionEffects,
-    InquiryEffects,
     MasterEffects,
     OrderEffects,
     PurchaseEffects,
@@ -16,7 +15,6 @@ import { reducer } from './reducers';
         StoreModule.forFeature('App', reducer),
         EffectsModule.forFeature([
             AdmissionEffects,
-            InquiryEffects,
             PurchaseEffects,
             UserEffects,
             MasterEffects,

@@ -35,9 +35,10 @@ export function reducer(state: IState, action: Actions): IState {
         }
         case ActionTypes.SearchSuccess: {
             const searchResult = action.payload.searchResult;
+            const limit = action.payload.limit;
             state.order.orders = searchResult.data;
             state.order.totalCount = searchResult.totalCount;
-            state.order.pageCount = Math.ceil(searchResult.totalCount / searchResult.data.length);
+            state.order.pageCount = Math.ceil(searchResult.totalCount / limit);
             return { ...state, loading: false, process: '', error: null };
         }
         case ActionTypes.SearchFail: {
@@ -51,6 +52,41 @@ export function reducer(state: IState, action: Actions): IState {
             return { ...state, loading: false, process: '', error: null };
         }
         case ActionTypes.CancelFail: {
+            const error = action.payload.error;
+            return { ...state, loading: false, process: '', error: JSON.stringify(error) };
+        }
+        case ActionTypes.Inquiry: {
+            return { ...state, loading: true, process: '照会しています' };
+        }
+        case ActionTypes.InquirySuccess: {
+            const order = action.payload.order;
+            state.order.order = order;
+            return { ...state, loading: false, process: '', error: null };
+        }
+        case ActionTypes.InquiryFail: {
+            const error = action.payload.error;
+            return { ...state, loading: false, process: '', error: JSON.stringify(error) };
+        }
+        case ActionTypes.OrderAuthorize: {
+            return { ...state, loading: true, process: 'QRコードを取得しています', };
+        }
+        case ActionTypes.OrderAuthorizeSuccess: {
+            const authorizeOrder = action.payload.order;
+            state.order.order = authorizeOrder;
+
+            return { ...state, loading: false, process: '', error: null };
+        }
+        case ActionTypes.OrderAuthorizeFail: {
+            const error = action.payload.error;
+            return { ...state, loading: false, process: '', error: JSON.stringify(error) };
+        }
+        case ActionTypes.Print: {
+            return { ...state, loading: true, process: '印刷しています' };
+        }
+        case ActionTypes.PrintSuccess: {
+            return { ...state, loading: false, process: '', error: null };
+        }
+        case ActionTypes.PrintFail: {
             const error = action.payload.error;
             return { ...state, loading: false, process: '', error: JSON.stringify(error) };
         }

@@ -1,12 +1,10 @@
 import { Reservation } from '../../models';
 import * as admissionAction from '../actions/admission.action';
-import * as inquiryAction from '../actions/inquiry.action';
 import * as masterAction from '../actions/master.action';
 import * as orderAction from '../actions/order.action';
 import * as purchaseAction from '../actions/purchase.action';
 import * as userAction from '../actions/user.action';
 import * as admissionReducer from './admission.reducer';
-import * as inquiryReducer from './inquiry.reducer';
 import * as masterReducer from './master.reducer';
 import * as orderReducer from './order.reducer';
 import * as purchaseReducer from './purchase.reducer';
@@ -20,7 +18,6 @@ export interface IState {
     process: string;
     error: string | null;
     purchase: purchaseReducer.IPurchaseState;
-    inquiry: inquiryReducer.IInquiryState;
     user: userReducer.IUserState;
     master: masterReducer.IMasterState;
     admission: admissionReducer.IAdmissionState;
@@ -35,7 +32,6 @@ export const initialState: IState = {
     process: '',
     error: null,
     purchase: purchaseReducer.purchaseInitialState,
-    inquiry: inquiryReducer.inquiryInitialState,
     user: userReducer.userInitialState,
     master: masterReducer.masterInitialState,
     admission: admissionReducer.admissionInitialState,
@@ -57,7 +53,6 @@ function getInitialState(): IState {
 type Actions =
     purchaseAction.Actions
     | userAction.Actions
-    | inquiryAction.Actions
     | masterAction.Actions
     | admissionAction.Actions
     | orderAction.Actions;
@@ -75,8 +70,6 @@ export function reducer(
         return purchaseReducer.reducer(state, <purchaseAction.Actions>action);
     } else if (/\[User\]/.test(action.type)) {
         return userReducer.reducer(state, <userAction.Actions>action);
-    } else if (/\[Inquiry\]/.test(action.type)) {
-        return inquiryReducer.reducer(state, <inquiryAction.Actions>action);
     } else if (/\[Master\]/.test(action.type)) {
         return masterReducer.reducer(state, <masterAction.Actions>action);
     } else if (/\[Admission\]/.test(action.type)) {
@@ -95,7 +88,6 @@ export const getLoading = (state: IState) => state.loading;
 export const getProcess = (state: IState) => state.process;
 export const getError = (state: IState) => state.error;
 export const getPurchase = (state: IState) => state.purchase;
-export const getInquiry = (state: IState) => state.inquiry;
 export const getUser = (state: IState) => state.user;
 export const getMaster = (state: IState) => state.master;
 export const getAdmission = (state: IState) => state.admission;

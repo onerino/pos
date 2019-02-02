@@ -9,8 +9,8 @@ import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { printers } from '../../../models';
 import { LibphonenumberFormatPipe } from '../../../pipes/libphonenumber-format.pipe';
-import * as inquiryAction from '../../../store/actions/inquiry.action';
 import * as masterAction from '../../../store/actions/master.action';
+import * as orderAction from '../../../store/actions/order.action';
 import * as userAction from '../../../store/actions/user.action';
 import * as reducers from '../../../store/reducers';
 import { AlertModalComponent } from '../../parts/alert-modal/alert-modal.component';
@@ -211,15 +211,15 @@ export class SettingComponent implements OnInit {
             id: this.settingForm.controls.printerId.value,
             ipAddress: this.settingForm.controls.printerIpAddress.value
         };
-        this.store.dispatch(new inquiryAction.Print({ printer }));
+        this.store.dispatch(new orderAction.Print({ printer }));
 
         const success = this.actions.pipe(
-            ofType(inquiryAction.ActionTypes.PrintSuccess),
+            ofType(orderAction.ActionTypes.PrintSuccess),
             tap(() => { })
         );
 
         const fail = this.actions.pipe(
-            ofType(inquiryAction.ActionTypes.PrintFail),
+            ofType(orderAction.ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
                     this.openAlert({

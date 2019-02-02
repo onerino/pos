@@ -19,7 +19,6 @@ import { CongestionComponent } from './components/pages/congestion/congestion.co
 import { ErrorComponent } from './components/pages/error/error.component';
 import { ExpiredComponent } from './components/pages/expired/expired.component';
 import { InquiryConfirmComponent } from './components/pages/inquiry/inquiry-confirm/inquiry-confirm.component';
-import { InquiryHistoryComponent } from './components/pages/inquiry/inquiry-history/inquiry-history.component';
 import { InquiryInputComponent } from './components/pages/inquiry/inquiry-input/inquiry-input.component';
 import { MaintenanceComponent } from './components/pages/maintenance/maintenance.component';
 import { NotfoundComponent } from './components/pages/notfound/notfound.component';
@@ -86,7 +85,6 @@ import { CoreStoreModule } from './store/core/store';
         BaseComponent,
         HeaderMenuComponent,
         ConfirmModalComponent,
-        InquiryHistoryComponent,
         QrCodeModalComponent,
         MvtkCheckModalComponent,
         SettingComponent,

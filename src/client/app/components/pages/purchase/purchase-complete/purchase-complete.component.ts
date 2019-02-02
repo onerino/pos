@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getTicketPrice, IEventOrder, orderToEventOrders } from '../../../../functions';
-import { ActionTypes, Print } from '../../../../store/actions/inquiry.action';
+import { ActionTypes, Print } from '../../../../store/actions/order.action';
 import * as reducers from '../../../../store/reducers';
 import { AlertModalComponent } from '../../../parts/alert-modal/alert-modal.component';
 

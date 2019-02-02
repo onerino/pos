@@ -108,11 +108,7 @@ export class OrderListComponent implements OnInit {
 
         const success = this.actions.pipe(
             ofType(ActionTypes.SearchSuccess),
-            tap(() => {
-                this.order.subscribe((order) => {
-                    console.log(order);
-                }).unsubscribe();
-            })
+            tap(() => { })
         );
 
         const fail = this.actions.pipe(
