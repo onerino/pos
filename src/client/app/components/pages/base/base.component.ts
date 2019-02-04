@@ -28,6 +28,7 @@ export class BaseComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     public ngOnDestroy() {
         this.isLoading.subscribe().unsubscribe();
+        this.process.subscribe().unsubscribe();
     }
 
 }

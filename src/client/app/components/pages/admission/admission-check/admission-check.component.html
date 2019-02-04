@@ -69,23 +69,32 @@
         </div>
         <hr class="border-0 bg-gray my-3">
         <p>
-            <span *ngIf="(admission | async).screeningEvent.location.address" class="mr-2">{{ (screeningEvent |
-                async).location.address.en }}</span>
-            <span>{{ (admission | async).screeningEvent.location.name.ja }}</span>
+            <span *ngIf="(admission | async).screeningEvent.location.address" class="mr-2">
+                {{ (admission | async).screeningEvent.location.address.en }}
+            </span>
+            <span>
+                {{ (admission | async).screeningEvent.location.name.ja }}
+            </span>
         </p>
         <div class="d-md-flex">
-            <p class="mr-3"><strong class="mr-2">開場</strong>{{ moment((admission |
-                async).screeningEvent.doorTime).format('MM/DD
-                (ddd) HH:mm') }}</p>
-            <p><strong class="mr-2">上映</strong>{{ moment((admission | async).screeningEvent.startDate).format('HH:mm')
-                }} - {{
-                moment((admission | async).screeningEvent.endDate).format('HH:mm') }}</p>
+            <p class="mr-3">
+                <strong class="mr-2">開場</strong>
+                {{ moment((admission | async).screeningEvent.doorTime).format('MM/DD (ddd) HH:mm') }}
+            </p>
+            <p>
+                <strong class="mr-2">上映</strong>
+                {{ moment((admission | async).screeningEvent.startDate).format('HH:mm') }} - {{ moment((admission | async).screeningEvent.endDate).format('HH:mm') }}
+            </p>
         </div>
         <div class="d-flex">
-            <p class="mr-3"><strong class="mr-2">予約</strong>{{ (admission |
-                async).screeningEvent.maximumAttendeeCapacity -
-                (admission | async).screeningEvent.remainingAttendeeCapacity }}</p>
-            <p><strong class="mr-2">入場</strong>{{ (admission | async).screeningEvent.attendeeCount }}</p>
+            <p class="mr-3">
+                <strong class="mr-2">予約</strong>
+                {{ (admission | async).screeningEvent.maximumAttendeeCapacity - (admission | async).screeningEvent.remainingAttendeeCapacity }}
+            </p>
+            <p>
+                <strong class="mr-2">入場</strong>
+                {{ (admission | async).screeningEvent.attendeeCount }}
+            </p>
         </div>
     </div>
     <div class="p-3 mb-4 bg-light-gray">

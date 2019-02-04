@@ -19,6 +19,7 @@ import * as purchase from './routes/purchase.route';
 const appRoutes: Routes = [
     { path: '', redirectTo: '/auth', pathMatch: 'full' },
     purchase.route,
+    purchase.schedule,
     auth.route,
     inquiry.route,
     admission.route,
