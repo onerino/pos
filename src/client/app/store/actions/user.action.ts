@@ -24,7 +24,7 @@ export class Delete implements Action {
 export class UpdateAll implements Action {
     public readonly type = ActionTypes.UpdateAll;
     constructor(public payload: {
-        movieTheater: factory.organization.IOrganization<factory.organizationType.MovieTheater>;
+        movieTheater: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
         pos: any;
         customerContact: factory.transaction.placeOrder.ICustomerContact;
         printer: IPrinter;

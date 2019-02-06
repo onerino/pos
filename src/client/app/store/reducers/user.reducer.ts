@@ -3,8 +3,8 @@ import { IState } from '.';
 import { Actions, ActionTypes } from '../actions/user.action';
 
 export interface IUserState {
-    movieTheater?: factory.organization.IOrganization<factory.organizationType.MovieTheater>;
-    pos?: factory.organization.IPOS;
+    movieTheater?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    pos?: factory.seller.IPOS;
     customerContact?: factory.transaction.placeOrder.ICustomerContact;
     printer?: {
         ipAddress: string;
@@ -29,10 +29,10 @@ export function reducer(state: IState, action: Actions): IState {
             const movieTheater = action.payload.movieTheater;
             const pos = action.payload.pos;
             const printer = action.payload.printer;
-            state.user.customerContact = customerContact;
-            state.user.movieTheater = movieTheater;
-            state.user.pos = pos;
-            state.user.printer = printer;
+            state.userData.customerContact = customerContact;
+            state.userData.movieTheater = movieTheater;
+            state.userData.pos = pos;
+            state.userData.printer = printer;
 
             return { ...state, loading: false, process: '' };
         }

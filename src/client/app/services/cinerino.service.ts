@@ -51,7 +51,7 @@ export class CinerinoService {
             };
         } catch (err) {
             console.error(err);
-            throw new Error('getServices is failed');
+            throw { error: 'アクセストークンの取得に失敗しました。' };
         }
     }
 

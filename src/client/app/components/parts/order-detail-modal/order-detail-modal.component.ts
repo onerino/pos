@@ -23,9 +23,9 @@ export class OrderDetailModalComponent implements OnInit, AfterViewInit {
     }
 
     public ngAfterViewInit() {
-        const element: HTMLElement = this.elementRef.nativeElement.querySelector('.scroll');
+        const element: HTMLElement = this.elementRef.nativeElement.querySelector('.scroll-vertical');
         setTimeout(() => {
-            element.scrollTo(0, 0);
+            element.scrollTop = 0;
         }, 0);
     }
 

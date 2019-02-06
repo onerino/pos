@@ -51,9 +51,9 @@ export class OrderEffects {
         map(action => action.payload),
         mergeMap(async (payload) => {
             await this.cinerino.getServices();
-            const order = payload.order;
+            const orders = payload.orders;
             try {
-                console.log(order);
+                console.log(orders);
                 return new orderAction.CancelSuccess();
             } catch (error) {
                 return new orderAction.CancelFail({ error: error });
@@ -62,10 +62,10 @@ export class OrderEffects {
     );
 
     /**
-     * Inquiry
+     * inquiry
      */
     @Effect()
-    public load = this.actions.pipe(
+    public inquiry = this.actions.pipe(
         ofType<orderAction.Inquiry>(orderAction.ActionTypes.Inquiry),
         map(action => action.payload),
         mergeMap(async (payload) => {
@@ -96,16 +96,20 @@ export class OrderEffects {
         map(action => action.payload),
         mergeMap(async (payload) => {
             try {
-                const order = payload.order;
+                const orders = payload.orders;
                 const printer = payload.printer;
                 const pos = payload.pos;
                 const timeout = 60000;
                 this.starPrint.initialize({ printer, pos, timeout });
-                let printerRequests;
-                if (order === undefined) {
+                let printerRequests: string[] = [];
+                if (orders === undefined) {
                     printerRequests = await this.starPrint.createPrinterTestRequest();
                 } else {
-                    printerRequests = await this.starPrint.createPrinterRequestList({ order });
+                    for (const order of orders) {
+                        const createPrinterRequestListResult =
+                            await this.starPrint.createPrinterRequestList({ order });
+                        printerRequests = printerRequests.concat(createPrinterRequestListResult);
+                    }
                 }
                 // n分割配列へ変換
                 const divide = 4;

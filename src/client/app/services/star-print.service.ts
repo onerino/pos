@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { factory } from '@cinerino/api-javascript-client';
 import * as moment from 'moment';
 import * as qrcode from 'qrcode';
-import { getTicketPrice } from '../functions';
+import { getTicketPrice, retry } from '../functions';
 import { connectionType, IPrinter, printers } from '../models';
 import { CinerinoService } from './cinerino.service';
 
@@ -13,7 +13,7 @@ export class StarPrintService {
     /**
      * 使用端末ID
      */
-    public pos?: factory.organization.IPOS;
+    public pos?: factory.seller.IPOS;
     /**
      * 印刷内容生成インスタンス
      */
@@ -36,7 +36,7 @@ export class StarPrintService {
      */
     public initialize(args: {
         printer: IPrinter;
-        pos?: factory.organization.IPOS;
+        pos?: factory.seller.IPOS;
         timeout?: number;
     }) {
         this.pos = args.pos;
@@ -292,25 +292,16 @@ export class StarPrintService {
         orderNumber: string,
         customer: { email?: string | undefined; telephone?: string | undefined; }
     ) {
-        let count = 0;
-        const intervalTime = 5000;
-        const limitCount = 1000;
-        return new Promise<factory.order.IOrder>((resolve, reject) => {
-            const timer = setInterval(async () => {
-                try {
-                    const order = await this.cinerino.order.authorizeOwnershipInfos({ orderNumber, customer });
-                    clearInterval(timer);
-                    resolve(order);
-                    return;
-                } catch (error) {
-                    if (count > limitCount) {
-                        clearInterval(timer);
-                        reject();
-                    }
-                }
-                count++;
-            }, intervalTime);
+        const order = await retry<factory.order.IOrder>({
+            process: (async () => {
+                const result = await this.cinerino.order.authorizeOwnershipInfos({ orderNumber, customer });
+                return result;
+            }),
+            interval: 5000,
+            limit: 5
         });
+
+        return order;
     }
 
     /**

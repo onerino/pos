@@ -97,7 +97,8 @@ export class SettingComponent implements OnInit {
             printerIpAddress: ['', [Validators.required]]
         });
         this.user.subscribe((user) => {
-            if (user.movieTheater !== undefined) {
+            if (user.movieTheater !== undefined
+                && user.movieTheater.location !== undefined) {
                 this.settingForm.controls.theaterCode.setValue(user.movieTheater.location.branchCode);
             }
             if (user.pos !== undefined) {
@@ -126,12 +127,14 @@ export class SettingComponent implements OnInit {
         }
         this.master.subscribe((master) => {
             const findTheater =
-                master.movieTheaters.find(theater => theater.location.branchCode === theaterCode);
+                master.movieTheaters.find(theater =>
+                    (theater.location !== undefined && theater.location.branchCode === theaterCode)
+                );
             if (findTheater === undefined) {
                 this.posList = [];
                 return;
             }
-            this.posList = findTheater.hasPOS;
+            this.posList = (findTheater.hasPOS === undefined) ? [] : findTheater.hasPOS;
         }).unsubscribe();
     }
 
@@ -171,9 +174,9 @@ export class SettingComponent implements OnInit {
             return;
         }
         this.master.subscribe((master) => {
-            const findMovieTheater = master.movieTheaters.find((theater) => {
-                return theater.location.branchCode === this.settingForm.controls.theaterCode.value;
-            });
+            const findMovieTheater = master.movieTheaters.find(theater =>
+                (theater.location !== undefined && theater.location.branchCode === this.settingForm.controls.theaterCode.value)
+            );
             if (findMovieTheater === undefined) {
                 return;
             }

@@ -45,8 +45,8 @@
     "@angular/platform-browser": "^7.1.1",
     "@angular/platform-browser-dynamic": "^7.1.1",
     "@angular/router": "^7.1.1",
-    "@cinerino/api-javascript-client": "^1.0.0-alpha.28",
-    "@cinerino/api-nodejs-client": "^1.1.0-alpha.39",
+    "@cinerino/api-javascript-client": "^1.0.0-alpha.29",
+    "@cinerino/api-nodejs-client": "^1.1.0-alpha.42",
     "@ng-bootstrap/ng-bootstrap": "^4.0.0",
     "@ngrx/effects": "^7.0.0",
     "@ngrx/store": "^7.0.0",
@@ -116,6 +116,6 @@
     "ts-node": "~4.0.2",
     "tslint": "^5.11.0",
     "tslint-microsoft-contrib": "^5.1.0",
-    "typescript": "^3.1.6"
+    "typescript": "^3.3.1"
   }
 }

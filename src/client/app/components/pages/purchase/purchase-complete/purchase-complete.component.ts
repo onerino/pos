@@ -58,10 +58,10 @@ export class PurchaseCompleteComponent implements OnInit {
                     this.router.navigate(['/error']);
                     return;
                 }
-                const order = purchase.order;
+                const orders = [purchase.order];
                 const pos = user.pos;
                 const printer = user.printer;
-                this.store.dispatch(new Print({ order, pos, printer }));
+                this.store.dispatch(new Print({ orders, pos, printer }));
             }).unsubscribe();
         }).unsubscribe();
 

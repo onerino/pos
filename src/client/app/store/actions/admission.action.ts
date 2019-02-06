@@ -14,17 +14,19 @@ export enum ActionTypes {
     GetScreeningEvent = '[User] Get Screening Event',
     GetScreeningEventSuccess = '[User] Get Screening Event Success',
     GetScreeningEventFail = '[User] Get Screening Event Fail',
-    GetScreeningEventReservations = '[Admission] Get Screening Reservations',
-    GetScreeningEventReservationsSuccess = '[Admission] Get Screening Events Reservations Success',
-    GetScreeningEventReservationsFail = '[Admission] Get Screening Events Reservations Fail',
+    // GetScreeningEventReservations = '[Admission] Get Screening Reservations',
+    // GetScreeningEventReservationsSuccess = '[Admission] Get Screening Events Reservations Success',
+    // GetScreeningEventReservationsFail = '[Admission] Get Screening Events Reservations Fail',
     InitializeQrcodeToken = '[Admission] Initialize Qrcode Token',
-    InitializeUsentList = '[Admission] Initialize Usent List',
-    ConvertQrcodeToToken = '[Admission] Convert Qrcode To Token',
-    ConvertQrcodeToTokenSuccess = '[Admission] Convert Qrcode To Token Success',
-    ConvertQrcodeToTokenFail = '[Admission] Convert Qrcode To Token Fail',
-    Admission = '[Admission] Admission',
-    AdmissionSuccess = '[Admission] Admission Success',
-    AdmissionFail = '[Admission] Admission Fail'
+    // ConvertQrcodeToToken = '[Admission] Convert Qrcode To Token',
+    // ConvertQrcodeToTokenSuccess = '[Admission] Convert Qrcode To Token Success',
+    // ConvertQrcodeToTokenFail = '[Admission] Convert Qrcode To Token Fail',
+    // Admission = '[Admission] Admission',
+    // AdmissionSuccess = '[Admission] Admission Success',
+    // AdmissionFail = '[Admission] Admission Fail',
+    Check = '[Admission] Check',
+    CheckSuccess = '[Admission] Check Success',
+    CheckFail = '[Admission] Check Fail'
 }
 
 /**
@@ -83,31 +85,34 @@ export class GetScreeningEventFail implements Action {
     constructor(public payload: { error: Error }) { }
 }
 
-/**
- * GetScreeningEventReservations
- */
-export class GetScreeningEventReservations implements Action {
-    public readonly type = ActionTypes.GetScreeningEventReservations;
-    constructor(public payload: { params: factory.chevre.reservation.event.ISearchConditions }) { }
-}
+// /**
+//  * GetScreeningEventReservations
+//  * @deprecated
+//  */
+// export class GetScreeningEventReservations implements Action {
+//     public readonly type = ActionTypes.GetScreeningEventReservations;
+//     constructor(public payload: { params: factory.chevre.reservation.event.ISearchConditions }) { }
+// }
 
-/**
- * GetScreeningEventReservationsSuccess
- */
-export class GetScreeningEventReservationsSuccess implements Action {
-    public readonly type = ActionTypes.GetScreeningEventReservationsSuccess;
-    constructor(public payload: {
-        screeningEventReservations: factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[]
-    }) { }
-}
+// /**
+//  * GetScreeningEventReservationsSuccess
+//  * @deprecated
+//  */
+// export class GetScreeningEventReservationsSuccess implements Action {
+//     public readonly type = ActionTypes.GetScreeningEventReservationsSuccess;
+//     constructor(public payload: {
+//         screeningEventReservations: factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[]
+//     }) { }
+// }
 
-/**
- * GetScreeningEventReservationsFail
- */
-export class GetScreeningEventReservationsFail implements Action {
-    public readonly type = ActionTypes.GetScreeningEventReservationsFail;
-    constructor(public payload: { error: Error }) { }
-}
+// /**
+//  * GetScreeningEventReservationsFail
+//  * @deprecated
+//  */
+// export class GetScreeningEventReservationsFail implements Action {
+//     public readonly type = ActionTypes.GetScreeningEventReservationsFail;
+//     constructor(public payload: { error: Error }) { }
+// }
 
 /**
  * InitializeQrcodeToken
@@ -117,73 +122,102 @@ export class InitializeQrcodeToken implements Action {
     constructor(public payload?: {}) { }
 }
 
-/**
- * InitializeUsentList
- */
-export class InitializeUsentList implements Action {
-    public readonly type = ActionTypes.InitializeUsentList;
-    constructor(public payload?: {}) { }
-}
+// /**
+//  * ConvertQrcodeToToken
+//  * @deprecated
+//  */
+// export class ConvertQrcodeToToken implements Action {
+//     public readonly type = ActionTypes.ConvertQrcodeToToken;
+//     constructor(public payload: {
+//         params: {
+//             code: string;
+//             screeningEventReservations: factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[];
+//         }
+//     }) { }
+// }
+
+// /**
+//  * ConvertQrcodeToTokenSuccess
+//  * @deprecated
+//  */
+// export class ConvertQrcodeToTokenSuccess implements Action {
+//     public readonly type = ActionTypes.ConvertQrcodeToTokenSuccess;
+//     constructor(public payload: {
+//         token?: string;
+//         decodeResult?: IDecodeResult;
+//         availableReservation?: factory.chevre.reservation.event.ISearchConditions;
+//         checkTokenActions: factory.action.check.token.IAction[];
+//         statusCode: number;
+//     }) { }
+// }
+
+// /**
+//  * ConvertQrcodeToTokenFail
+//  * @deprecated
+//  */
+// export class ConvertQrcodeToTokenFail implements Action {
+//     public readonly type = ActionTypes.ConvertQrcodeToTokenFail;
+//     constructor(public payload: { error: Error }) { }
+// }
+
+// /**
+//  * Admission
+//  * @deprecated
+//  */
+// export class Admission implements Action {
+//     public readonly type = ActionTypes.Admission;
+//     constructor(public payload: { token: string; decodeResult: IDecodeResult }) { }
+// }
+
+// /**
+//  * AdmissionSuccess
+//  * @deprecated
+//  */
+// export class AdmissionSuccess implements Action {
+//     public readonly type = ActionTypes.AdmissionSuccess;
+//     constructor(public payload: { token: string; decodeResult: IDecodeResult }) { }
+// }
+
+// /**
+//  * AdmissionFail
+//  * @deprecated
+//  */
+// export class AdmissionFail implements Action {
+//     public readonly type = ActionTypes.AdmissionFail;
+//     constructor(public payload: { error: Error, token: string; decodeResult: IDecodeResult }) { }
+// }
 
 /**
- * ConvertQrcodeToToken
+ * Check
  */
-export class ConvertQrcodeToToken implements Action {
-    public readonly type = ActionTypes.ConvertQrcodeToToken;
+export class Check implements Action {
+    public readonly type = ActionTypes.Check;
     constructor(public payload: {
-        params: {
-            code: string;
-            screeningEventReservations: factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[];
-        }
+        code: string;
+        screeningEvent: factory.chevre.event.screeningEvent.IEvent
     }) { }
 }
 
 /**
- * ConvertQrcodeToTokenSuccess
+ * CheckSuccess
  */
-export class ConvertQrcodeToTokenSuccess implements Action {
-    public readonly type = ActionTypes.ConvertQrcodeToTokenSuccess;
+export class CheckSuccess implements Action {
+    public readonly type = ActionTypes.CheckSuccess;
     constructor(public payload: {
         token?: string;
         decodeResult?: IDecodeResult;
         availableReservation?: factory.chevre.reservation.event.ISearchConditions;
         checkTokenActions: factory.action.check.token.IAction[];
-        isAvailable: boolean;
         statusCode: number;
     }) { }
 }
 
 /**
- * ConvertQrcodeToTokenFail
+ * CheckFail
  */
-export class ConvertQrcodeToTokenFail implements Action {
-    public readonly type = ActionTypes.ConvertQrcodeToTokenFail;
+export class CheckFail implements Action {
+    public readonly type = ActionTypes.CheckFail;
     constructor(public payload: { error: Error }) { }
-}
-
-
-/**
- * Admission
- */
-export class Admission implements Action {
-    public readonly type = ActionTypes.Admission;
-    constructor(public payload: { token: string; decodeResult: IDecodeResult }) { }
-}
-
-/**
- * AdmissionSuccess
- */
-export class AdmissionSuccess implements Action {
-    public readonly type = ActionTypes.AdmissionSuccess;
-    constructor(public payload: { token: string; decodeResult: IDecodeResult }) { }
-}
-
-/**
- * AdmissionFail
- */
-export class AdmissionFail implements Action {
-    public readonly type = ActionTypes.AdmissionFail;
-    constructor(public payload: { error: Error, token: string; decodeResult: IDecodeResult }) { }
 }
 
 /**
@@ -197,14 +231,16 @@ export type Actions =
     | GetScreeningEvent
     | GetScreeningEventSuccess
     | GetScreeningEventFail
-    | GetScreeningEventReservations
-    | GetScreeningEventReservationsSuccess
-    | GetScreeningEventReservationsFail
+    // | GetScreeningEventReservations
+    // | GetScreeningEventReservationsSuccess
+    // | GetScreeningEventReservationsFail
     | InitializeQrcodeToken
-    | InitializeUsentList
-    | ConvertQrcodeToToken
-    | ConvertQrcodeToTokenSuccess
-    | ConvertQrcodeToTokenFail
-    | Admission
-    | AdmissionSuccess
-    | AdmissionFail;
+    // | ConvertQrcodeToToken
+    // | ConvertQrcodeToTokenSuccess
+    // | ConvertQrcodeToTokenFail
+    // | Admission
+    // | AdmissionSuccess
+    // | AdmissionFail
+    | Check
+    | CheckSuccess
+    | CheckFail;

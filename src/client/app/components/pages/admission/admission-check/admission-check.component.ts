@@ -1,6 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { factory } from '@cinerino/api-javascript-client';
+// import { factory } from '@cinerino/api-javascript-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
@@ -23,6 +23,7 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
     public stream: MediaStream | null;
     public isShowVideo: boolean;
     public video: HTMLVideoElement;
+    public scanTimer: any;
     public scanLoop: any;
     public updateLoop: any;
     public moment: typeof moment = moment;
@@ -42,10 +43,12 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         this.video.width = window.innerWidth;
         this.isLoading = this.store.pipe(select(reducers.getLoading));
         this.admission = this.store.pipe(select(reducers.getAdmission));
-        this.getScreeningEventReservations();
+        // this.getScreeningEventReservations();
+        this.store.dispatch(new admissionAction.InitializeQrcodeToken());
     }
 
     public ngOnDestroy() {
+        clearTimeout(this.scanTimer);
         clearInterval(this.scanLoop);
         clearInterval(this.updateLoop);
     }
@@ -56,7 +59,7 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         const KEY_ESCAPE = 'Escape';
         if (event.key === KEY_ENTER && this.inputCode.length > 0) {
             // 読み取り完了
-            this.convertQrcodeToToken(this.inputCode);
+            this.check(this.inputCode);
             this.inputCode = '';
         } else if (event.key !== KEY_ESCAPE) {
             this.inputCode += event.key;
@@ -82,7 +85,7 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
                 if (code !== null) {
                     this.inputCode = code;
                     // 読み取り完了
-                    this.convertQrcodeToToken(code);
+                    this.check(code);
                 }
             }, scanLoopTime);
             this.isShowVideo = true;
@@ -124,65 +127,103 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         return qrcode.data;
     }
 
-    public getScreeningEventReservations() {
+    // public getScreeningEventReservations() {
+    //     this.admission.subscribe((admission) => {
+    //         const screeningEvent = admission.screeningEvent;
+    //         if (screeningEvent === undefined) {
+    //             this.router.navigate(['/error']);
+    //             return;
+    //         }
+    //         this.store.dispatch(new admissionAction.GetScreeningEventReservations({
+    //             params: {
+    //                 sort: { reservationNumber: factory.chevre.sortType.Ascending },
+    //                 reservationStatuses: [
+    //                     factory.chevre.reservationStatusType.ReservationConfirmed
+    //                     // factory.chevre.reservationStatusType.ReservationCancelled,
+    //                     // factory.chevre.reservationStatusType.ReservationHold,
+    //                     // factory.chevre.reservationStatusType.ReservationPending
+    //                 ],
+    //                 reservationFor: {
+    //                     typeOf: factory.chevre.eventType.ScreeningEvent,
+    //                     id: screeningEvent.id
+    //                 }
+    //             }
+    //         }));
+    //     }).unsubscribe();
+
+    //     const success = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.GetScreeningEventReservationsSuccess),
+    //         tap(() => { })
+    //     );
+
+    //     const fail = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.GetScreeningEventReservationsFail),
+    //         tap(() => {
+    //             this.router.navigate(['/error']);
+    //         })
+    //     );
+    //     race(success, fail).pipe(take(1)).subscribe();
+    // }
+
+    // /**
+    //  * QRコードをトークンへ変換
+    //  * @param {string} code
+    //  */
+    // public convertQrcodeToToken(code: string) {
+    //     this.admission.subscribe((admission) => {
+    //         const screeningEventReservations = admission.screeningEventReservations;
+    //         this.store.dispatch(new admissionAction.ConvertQrcodeToToken({
+    //             params: { code, screeningEventReservations }
+    //         }));
+    //     }).unsubscribe();
+
+    //     const success = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenSuccess),
+    //         tap(() => {
+    //             this.send();
+    //         })
+    //     );
+
+    //     const fail = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenFail),
+    //         tap(() => {
+    //             this.openAlert({
+    //                 title: 'エラー',
+    //                 body: '読み込みに失敗しました。'
+    //             });
+    //         })
+    //     );
+    //     race(success, fail).pipe(take(1)).subscribe();
+    // }
+
+    /**
+     * QRコードから入場を確認
+     * @param {string} code
+     */
+    public check(code: string) {
+        if (this.scanTimer !== undefined) {
+            clearTimeout(this.scanTimer);
+        }
         this.admission.subscribe((admission) => {
             const screeningEvent = admission.screeningEvent;
             if (screeningEvent === undefined) {
-                this.router.navigate(['/error']);
                 return;
             }
-            this.store.dispatch(new admissionAction.GetScreeningEventReservations({
-                params: {
-                    sort: { reservationNumber: factory.chevre.sortType.Ascending },
-                    reservationStatuses: [
-                        factory.chevre.reservationStatusType.ReservationConfirmed
-                        // factory.chevre.reservationStatusType.ReservationCancelled,
-                        // factory.chevre.reservationStatusType.ReservationHold,
-                        // factory.chevre.reservationStatusType.ReservationPending
-                    ],
-                    reservationFor: {
-                        typeOf: factory.chevre.eventType.ScreeningEvent,
-                        id: screeningEvent.id
-                    }
-                }
-            }));
+            this.store.dispatch(new admissionAction.Check({ code, screeningEvent }));
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.GetScreeningEventReservationsSuccess),
-            tap(() => { })
-        );
-
-        const fail = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.GetScreeningEventReservationsFail),
+            ofType(admissionAction.ActionTypes.CheckSuccess),
             tap(() => {
-                this.router.navigate(['/error']);
-            })
-        );
-        race(success, fail).pipe(take(1)).subscribe();
-    }
-
-    /**
-     * QRコードをトークンへ変換
-     * @param {string} code
-     */
-    public convertQrcodeToToken(code: string) {
-        this.admission.subscribe((admission) => {
-            const screeningEventReservations = admission.screeningEventReservations;
-            this.store.dispatch(new admissionAction.ConvertQrcodeToToken({
-                params: { code, screeningEventReservations }
-            }));
-        }).unsubscribe();
-
-        const success = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenSuccess),
-            tap(() => {
-                this.send();
+                const time = 30000;
+                this.scanTimer = setTimeout(() => {
+                    this.store.dispatch(new admissionAction.InitializeQrcodeToken());
+                }, time);
             })
         );
 
         const fail = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenFail),
+            ofType(admissionAction.ActionTypes.CheckFail),
             tap(() => {
                 this.openAlert({
                     title: 'エラー',
@@ -197,8 +238,8 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         const loopTime = 60000; // 1分に一回
         clearInterval(this.updateLoop);
         this.updateLoop = setInterval(() => {
-            this.getScreeningEventReservations();
-            this.sendAll();
+            // this.getScreeningEventReservations();
+            // this.sendAll();
             this.getScreeningEvent();
         }, loopTime);
     }
@@ -226,52 +267,52 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         race(success, fail).pipe(take(1)).subscribe();
     }
 
-    public send() {
-        this.admission.subscribe((admission) => {
-            const qrcodeToken = admission.qrcodeToken;
-            if (qrcodeToken === undefined
-                || qrcodeToken.token === undefined
-                || qrcodeToken.decodeResult === undefined) {
-                return;
-            }
-            const token = qrcodeToken.token;
-            const decodeResult = qrcodeToken.decodeResult;
-            this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
-        }).unsubscribe();
+    // public send() {
+    //     this.admission.subscribe((admission) => {
+    //         const qrcodeToken = admission.qrcodeToken;
+    //         if (qrcodeToken === undefined
+    //             || qrcodeToken.token === undefined
+    //             || qrcodeToken.decodeResult === undefined) {
+    //             return;
+    //         }
+    //         const token = qrcodeToken.token;
+    //         const decodeResult = qrcodeToken.decodeResult;
+    //         this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
+    //     }).unsubscribe();
 
-        const success = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.AdmissionSuccess),
-            tap(() => { })
-        );
+    //     const success = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.AdmissionSuccess),
+    //         tap(() => { })
+    //     );
 
-        const fail = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.AdmissionFail),
-            tap(() => { })
-        );
-        race(success, fail).pipe(take(1)).subscribe();
-    }
+    //     const fail = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.AdmissionFail),
+    //         tap(() => { })
+    //     );
+    //     race(success, fail).pipe(take(1)).subscribe();
+    // }
 
-    public sendAll() {
-        this.admission.subscribe((admission) => {
-            const usentList = admission.usentList;
-            usentList.forEach((usent) => {
-                const token = usent.token;
-                const decodeResult = usent.decodeResult;
-                this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
-            });
-        }).unsubscribe();
+    // public sendAll() {
+    //     this.admission.subscribe((admission) => {
+    //         const usentList = admission.usentList;
+    //         usentList.forEach((usent) => {
+    //             const token = usent.token;
+    //             const decodeResult = usent.decodeResult;
+    //             this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
+    //         });
+    //     }).unsubscribe();
 
-        const success = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.AdmissionSuccess),
-            tap(() => { })
-        );
+    //     const success = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.AdmissionSuccess),
+    //         tap(() => { })
+    //     );
 
-        const fail = this.actions.pipe(
-            ofType(admissionAction.ActionTypes.AdmissionFail),
-            tap(() => { })
-        );
-        race(success, fail).pipe(take(1)).subscribe();
-    }
+    //     const fail = this.actions.pipe(
+    //         ofType(admissionAction.ActionTypes.AdmissionFail),
+    //         tap(() => { })
+    //     );
+    //     race(success, fail).pipe(take(1)).subscribe();
+    // }
 
     public openAlert(args: {
         title: string;

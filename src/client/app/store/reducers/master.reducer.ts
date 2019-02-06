@@ -6,7 +6,7 @@ import { Actions, ActionTypes } from '../actions/master.action';
  * IMasterState
  */
 export interface IMasterState {
-    movieTheaters: factory.organization.IOrganization<factory.organizationType.MovieTheater>[];
+    movieTheaters: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>[];
     screeningEvents: factory.chevre.event.screeningEvent.IEvent[];
 }
 
@@ -23,7 +23,7 @@ export const masterInitialState: IMasterState = {
 export function reducer(state: IState, action: Actions): IState {
     switch (action.type) {
         case ActionTypes.Delete: {
-            state.master = {
+            state.masterData = {
                 movieTheaters: [],
                 screeningEvents: []
             };
@@ -34,7 +34,8 @@ export function reducer(state: IState, action: Actions): IState {
         }
         case ActionTypes.GetTheatersSuccess: {
             const movieTheaters = action.payload.movieTheaters;
-            return { ...state, loading: false, process: '', error: null, master: { ...state.master, movieTheaters } };
+            state.masterData.movieTheaters = movieTheaters;
+            return { ...state, loading: false, process: '', error: null };
         }
         case ActionTypes.GetTheatersFail: {
             const error = action.payload.error;
@@ -45,7 +46,7 @@ export function reducer(state: IState, action: Actions): IState {
         }
         case ActionTypes.GetScheduleSuccess: {
             const screeningEvents = action.payload.screeningEvents;
-            state.master.screeningEvents = screeningEvents;
+            state.masterData.screeningEvents = screeningEvents;
 
             return { ...state, loading: false, process: '', error: null };
         }

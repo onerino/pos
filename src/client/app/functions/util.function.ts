@@ -1,4 +1,5 @@
 import * as libphonenumber from 'libphonenumber-js';
+
 /**
  * 電話番号変換
  */
@@ -21,7 +22,38 @@ export function toFull(value: string) {
  * 半角変換
  */
 export function toHalf(value: string) {
-    return value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+    return value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (s) {
         return String.fromCharCode(s.charCodeAt(0) - 65248);
+    });
+}
+
+export async function retry<T>(args: {
+    process: Function;
+    interval: number;
+    limit: number;
+}) {
+    let count = 0;
+    return new Promise<T>(async (resolve, reject) => {
+        const timerProcess = () => {
+            setTimeout(async () => {
+                count++;
+                try {
+                    const result = await args.process();
+                    resolve(result);
+                } catch (error) {
+                    if (count >= args.limit) {
+                        reject(error);
+                        return;
+                    }
+                    timerProcess();
+                }
+            }, args.interval);
+        };
+        try {
+            const result = await args.process();
+            resolve(result);
+        } catch (error) {
+            timerProcess();
+        }
     });
 }

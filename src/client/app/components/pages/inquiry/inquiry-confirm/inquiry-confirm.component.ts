@@ -57,10 +57,10 @@ export class InquiryConfirmComponent implements OnInit {
                     this.router.navigate(['/error']);
                     return;
                 }
-                const order = inquiry.order;
+                const orders = [inquiry.order];
                 const pos = user.pos;
                 const printer = user.printer;
-                this.store.dispatch(new Print({ order, pos, printer }));
+                this.store.dispatch(new Print({ orders, pos, printer }));
             }).unsubscribe();
         }).unsubscribe();
 

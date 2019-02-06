@@ -1,5 +1,11 @@
 @import '../../../../../assets/scss/theme';
 
+.scroll-horizontal {
+    .table {
+        min-width: 800px;
+    }
+}
+
 .item {
     display: grid;
     grid-template-columns: 1fr 0.5fr 1fr 1fr 1fr;
