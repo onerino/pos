@@ -1,11 +1,13 @@
 /**
  * NgModule
  */
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { SwiperModule } from 'ngx-swiper-wrapper';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
@@ -44,18 +46,22 @@ import { LoadingComponent } from './components/parts/loading/loading.component';
 import { MvtkCheckModalComponent } from './components/parts/mvtk-check-modal/mvtk-check-modal.component';
 import { NumericKeypadComponent } from './components/parts/numeric-keypad/numeric-keypad.component';
 import { OrderDetailModalComponent } from './components/parts/order-detail-modal/order-detail-modal.component';
-import { PurchaseContentsComponent } from './components/parts/purchase-contents/purchase-contents.component';
 import { PurchaseInfoComponent } from './components/parts/purchase-info/purchase-info.component';
-import { PurchasePaymentModalComponent } from './components/parts/purchase-payment-modal/purchase-payment-modal.component';
 import { PurchaseScheduleFilmComponent } from './components/parts/purchase-schedule-film/purchase-schedule-film.component';
 import { PurchaseTransactionModalComponent } from './components/parts/purchase-transaction-modal/purchase-transaction-modal.component';
 import { QrCodeModalComponent } from './components/parts/qrcode-modal/qrcode-modal.component';
 import { ScreenComponent } from './components/parts/screen/screen.component';
 import { TicketListModalComponent } from './components/parts/ticket-list-modal/ticket-list-modal.component';
 import { TransactionRemainingTimeComponent } from './components/parts/transaction-remaining-time/transaction-remaining-time.component';
+import { ChangeLanguagePipe } from './pipes/change-language.pipe';
+import { FormatDatePipe } from './pipes/format-date.pipe';
 import { LibphonenumberFormatPipe } from './pipes/libphonenumber-format.pipe';
 import { StoreModule } from './store.module';
 import { CoreStoreModule } from './store/core/store';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, '/i18n/');
+}
 
 @NgModule({
     declarations: [
@@ -74,7 +80,6 @@ import { CoreStoreModule } from './store/core/store';
         ContentsComponent,
         HeaderComponent,
         FooterComponent,
-        PurchaseContentsComponent,
         PurchaseScheduleFilmComponent,
         ScreenComponent,
         TicketListModalComponent,
@@ -91,7 +96,6 @@ import { CoreStoreModule } from './store/core/store';
         InquiryInputComponent,
         InquiryConfirmComponent,
         PurchasePaymentComponent,
-        PurchasePaymentModalComponent,
         LibphonenumberFormatPipe,
         NumericKeypadComponent,
         CongestionComponent,
@@ -104,7 +108,9 @@ import { CoreStoreModule } from './store/core/store';
         OrderListComponent,
         OrderDetailModalComponent,
         TransactionRemainingTimeComponent,
-        ExpiredComponent
+        ExpiredComponent,
+        ChangeLanguagePipe,
+        FormatDatePipe
     ],
     entryComponents: [
         TicketListModalComponent,
@@ -112,7 +118,6 @@ import { CoreStoreModule } from './store/core/store';
         ConfirmModalComponent,
         QrCodeModalComponent,
         MvtkCheckModalComponent,
-        PurchasePaymentModalComponent,
         PurchaseTransactionModalComponent,
         OrderDetailModalComponent
     ],
@@ -125,7 +130,14 @@ import { CoreStoreModule } from './store/core/store';
         SwiperModule,
         StoreModule,
         CoreStoreModule,
-        NgbModule
+        NgbModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        })
     ],
     providers: [],
     bootstrap: [AppComponent]

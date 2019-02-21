@@ -42,17 +42,17 @@ export function reducer(state: IState, action: Actions): IState {
         case ActionTypes.SelectScheduleDate: {
             const scheduleDate = action.payload.scheduleDate;
             state.admissionData.scheduleDate = scheduleDate;
-            return { ...state, loading: true, process: '', error: null };
+            return { ...state, loading: true, process: { ja: '', en: '' }, error: null };
         }
         case ActionTypes.SelectSchedule: {
             const screeningEvent = action.payload.screeningEvent;
             state.admissionData.screeningEvent = screeningEvent;
-            return { ...state, loading: false, process: '' };
+            return { ...state, loading: false, process: { ja: '', en: '' } };
         }
         case ActionTypes.SelectScreeningEvent: {
             const screeningEvent = action.payload.screeningEvent;
             state.admissionData.screeningEvent = screeningEvent;
-            return { ...state, loading: false,  process: '', error: null };
+            return { ...state, loading: false,  process: { ja: '', en: '' }, error: null };
         }
         case ActionTypes.GetScreeningEvent: {
             return { ...state };
@@ -88,11 +88,11 @@ export function reducer(state: IState, action: Actions): IState {
         // case ActionTypes.ConvertQrcodeToTokenSuccess: {
         //     const qrcodeToken = action.payload;
         //     state.admissionData.qrcodeToken = qrcodeToken;
-        //     return { ...state, loading: false, process: '', error: null };
+        //     return { ...state, loading: false, process: { ja: '', en: '' }, error: null };
         // }
         // case ActionTypes.ConvertQrcodeToTokenFail: {
         //     const error = action.payload.error;
-        //     return { ...state, loading: false, process: '', error: JSON.stringify(error) };
+        //     return { ...state, loading: false, process: { ja: '', en: '' }, error: JSON.stringify(error) };
         // }
         // case ActionTypes.Admission: {
         //     return { ...state, error: null };
@@ -115,17 +115,17 @@ export function reducer(state: IState, action: Actions): IState {
         //     return { ...state, error: JSON.stringify(error) };
         // }
         case ActionTypes.Check: {
-            return { ...state, error: null, loading: true, process: 'QRコード情報をを確認しています' };
+            return { ...state, error: null, loading: true, process: { ja: 'QRコード情報をを確認しています', en: 'Checking the QR code information' } };
         }
         case ActionTypes.CheckSuccess: {
             const qrcodeToken = action.payload;
             state.admissionData.qrcodeToken = qrcodeToken;
-            return { ...state, loading: false, process: '', error: null };
+            return { ...state, loading: false, process: { ja: '', en: '' }, error: null };
         }
         case ActionTypes.CheckFail: {
             const error = action.payload.error;
 
-            return { ...state, error: JSON.stringify(error), loading: false, process: '' };
+            return { ...state, error: JSON.stringify(error), loading: false, process: { ja: '', en: '' } };
         }
         default: {
             return state;

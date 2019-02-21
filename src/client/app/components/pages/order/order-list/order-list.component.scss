@@ -2,22 +2,7 @@
 
 .scroll-horizontal {
     .table {
-        min-width: 800px;
+        min-width: 900px;
     }
 }
 
-.item {
-    display: grid;
-    grid-template-columns: 1fr 0.5fr 1fr 1fr 1fr;
-    border: 1px solid;
-    border-top: none;
-    @include media-breakpoint-down(sm) {
-        display: block;
-        border: 1px solid;
-    }
-    &.header {
-        @include media-breakpoint-down(sm) {
-            display: none;
-        } 
-    }
-}

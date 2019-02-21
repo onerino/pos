@@ -1,21 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { factory } from '@cinerino/api-javascript-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getAmount, getTicketPrice } from '../../../../functions';
+import { UtilService } from '../../../../services';
 import {
     ActionTypes,
     CancelTemporaryReservation,
     UnsettledDelete
 } from '../../../../store/actions/purchase.action';
 import * as reducers from '../../../../store/reducers';
-import { AlertModalComponent } from '../../../parts/alert-modal/alert-modal.component';
-import { ConfirmModalComponent } from '../../../parts/confirm-modal/confirm-modal.component';
 
 @Component({
     selector: 'app-purchase-cart',
@@ -30,9 +29,10 @@ export class PurchaseCartComponent implements OnInit {
     public amount: number;
     constructor(
         private store: Store<reducers.IState>,
-        private modal: NgbModal,
+        private util: UtilService,
         private actions: Actions,
         private router: Router,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -43,32 +43,6 @@ export class PurchaseCartComponent implements OnInit {
         this.purchase.subscribe((purchase) => {
             this.amount = getAmount(purchase.authorizeSeatReservations);
         }).unsubscribe();
-    }
-
-    public openAlert(args: {
-        title: string;
-        body: string;
-    }) {
-        const modalRef = this.modal.open(AlertModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
-    }
-
-    public openConfirm(args: {
-        title: string;
-        body: string;
-        cb: Function
-    }) {
-        const modalRef = this.modal.open(ConfirmModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
-        modalRef.result.then(() => {
-            args.cb();
-        }).catch(() => { });
     }
 
     public removeItemProcess(
@@ -97,8 +71,8 @@ export class PurchaseCartComponent implements OnInit {
     }
 
     public removeItem(authorizeSeatReservation: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier>) {
-        this.openConfirm({
-            title: '確認',
+        this.util.openConfirm({
+            title: this.translate.instant('common.confirm'),
             body: '削除してよろしいですか。',
             cb: () => {
                 this.removeItemProcess(authorizeSeatReservation);

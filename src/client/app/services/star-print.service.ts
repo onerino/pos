@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { factory } from '@cinerino/api-javascript-client';
-import * as moment from 'moment';
-import * as qrcode from 'qrcode';
-import { getTicketPrice, retry } from '../functions';
+import { createPrintImage, createTestPrintImage, sleep } from '../functions';
 import { connectionType, IPrinter, printers } from '../models';
-import { CinerinoService } from './cinerino.service';
 
 @Injectable({
     providedIn: 'root'
@@ -27,14 +24,53 @@ export class StarPrintService {
      */
     public isReady: boolean;
 
-    constructor(
-        private cinerino: CinerinoService
-    ) { }
+    constructor() { }
+
+    /**
+     * 印刷処理
+     */
+    public async printProcess(args: {
+        orders: factory.order.IOrder[];
+        printer: IPrinter;
+        pos?: factory.seller.IPOS;
+        timeout?: number;
+    }) {
+        const orders = args.orders;
+        const printer = args.printer;
+        const pos = args.pos;
+        const timeout = (args.timeout === undefined) ? 60000 : args.timeout;
+        this.initialize({ printer, pos, timeout });
+        let printerRequests: string[] = [];
+        if (orders.length === 0) {
+            printerRequests = await this.createTestPrinterRequest();
+        } else {
+            printerRequests = await this.createPrinterRequestList(orders);
+        }
+        // n分割配列へ変換
+        const divide = 4;
+        const divideRequests: string[] = [];
+        let divideRequest = '';
+        printerRequests.forEach((request, index) => {
+            divideRequest += request;
+            if ((index + 1) % divide === 0) {
+                divideRequests.push(divideRequest);
+                divideRequest = '';
+            }
+        });
+        if (divideRequest !== '') {
+            divideRequests.push(divideRequest);
+        }
+        for (const printerRequest of divideRequests) {
+            // safari対応のため0.3秒待つ
+            await sleep(300);
+            await this.print({ printerRequest });
+        }
+    }
 
     /**
      * 初期化
      */
-    public initialize(args: {
+    private initialize(args: {
         printer: IPrinter;
         pos?: factory.seller.IPOS;
         timeout?: number;
@@ -50,13 +86,14 @@ export class StarPrintService {
                 throw new Error('プリンターのIPアドレスが正しく指定されていません');
             }
             const port = /https/.test(window.location.protocol) ? 443 : 80;
-            const findResult = printers.find(p => p.id === printer.id);
+            const findResult = printers.find(p => p.connectionType === printer.connectionType);
             if (findResult === undefined
-                || (findResult.id !== '001' && findResult.id !== '002')
+                || (findResult.connectionType !== connectionType.StarBluetooth
+                    && findResult.connectionType !== connectionType.StarLAN)
             ) {
                 throw new Error('選択しているプリンターに対応していません');
             }
-            const url = (findResult.connectionType === connectionType.LAN)
+            const url = (findResult.connectionType === connectionType.StarLAN)
                 ? `https://${printer.ipAddress}:${port}/StarWebPRNT/SendMessage`
                 : `https://${printer.ipAddress}/StarWebPRNT/SendMessage`;
             const papertype = 'normal';
@@ -125,46 +162,6 @@ export class StarPrintService {
     }
 
     /**
-     * 印刷イメージ作成
-     */
-    private async createPrintImage(args: {
-        size: { width: number; height: number; },
-        order: factory.order.IOrder;
-        offerIndex: number;
-    }) {
-        const canvas = document.createElement('canvas');
-        const order = args.order;
-        const acceptedOffer = order.acceptedOffers[args.offerIndex];
-        if (acceptedOffer.itemOffered.reservedTicket.ticketedSeat === undefined) {
-            throw new Error('ticketedSeat is undefined');
-        }
-        const data = {
-            confirmationNumber: args.order.confirmationNumber,
-            theaterName: acceptedOffer.itemOffered.reservationFor.superEvent.location.name.ja,
-            screenName: acceptedOffer.itemOffered.reservationFor.location.name.ja,
-            eventName: acceptedOffer.itemOffered.reservationFor.name.ja,
-            startDate: moment(acceptedOffer.itemOffered.reservationFor.startDate).format('YY/MM/DD (ddd) HH:mm'),
-            seatNumber: acceptedOffer.itemOffered.reservedTicket.ticketedSeat.seatNumber,
-            ticketName: acceptedOffer.itemOffered.reservedTicket.ticketType.name.ja,
-            price: getTicketPrice(acceptedOffer).single,
-            qrcode: <string>acceptedOffer.itemOffered.reservedTicket.ticketToken
-        };
-        const context = await this.draw({
-            canvas,
-            size: args.size,
-            data
-        });
-
-        return {
-            context,
-            x: 0,
-            y: 0,
-            width: args.size.width,
-            height: args.size.height
-        };
-    }
-
-    /**
      * プリンターリクエスト作成
      */
     private async createPrinterRequest(args: {
@@ -172,12 +169,17 @@ export class StarPrintService {
         offerIndex: number;
     }) {
         let request = '';
-        const printImage = await this.createPrintImage({
-            size: { width: 560, height: 730 },
+        const canvas = await createPrintImage({
             order: args.order,
             offerIndex: args.offerIndex
         });
-        request = this.builder.createBitImageElement(printImage);
+        request = this.builder.createBitImageElement({
+            context: canvas.getContext('2d'),
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        });
         // 紙を切断
         request += this.builder.createCutPaperElement({ feed: true, type: 'partial' });
 
@@ -185,81 +187,19 @@ export class StarPrintService {
     }
 
     /**
-     * 印刷テスト用イメージ作成
+     * プリンターテスト用リクエスト作成
      */
-    private async createPrintTestImage(args: {
-        size: { width: number; height: number; }
-    }) {
-        const canvas = document.createElement('canvas');
-        const context = await this.draw({
-            canvas,
-            size: args.size,
-            data: {
-                confirmationNumber: 12345678,
-                theaterName: 'テスト劇場',
-                screenName: 'テストスクリーン',
-                eventName: 'テスト-----------------------------作品',
-                startDate: moment().format('YY/MM/DD (ddd) HH:mm'),
-                seatNumber: 'TEST-1',
-                ticketName: 'テスト1234567890券種',
-                price: 1000,
-                qrcode: 'TEST'
-            }
-        });
-
-        return {
-            context,
-            x: 0,
-            y: 0,
-            width: args.size.width,
-            height: args.size.height
-        };
-    }
-
-    /**
-     * 印刷テスト用イメージ作成確認用
-     */
-    public async createPrintTestImageToCanvas(args: {
-        size: { width: number; height: number; }
-    }) {
-        const canvas = (<HTMLCanvasElement>document.getElementById('test'));
-        const context = await this.draw({
-            canvas,
-            size: args.size,
-            data: {
-                confirmationNumber: 12345678,
-                theaterName: 'テストTOEI',
-                screenName: 'テストスクリーン',
-                eventName: 'テスト作品',
-                startDate: moment().format('YY/MM/DD (ddd) HH:mm'),
-                seatNumber: 'Z-1',
-                ticketName: 'テスト券種',
-                price: 1000,
-                qrcode: 'TEST'
-            }
-        });
-
-        return {
-            context,
-            x: 0,
-            y: 0,
-            width: args.size.width,
-            height: args.size.height
-        };
-    }
-
-    /**
-     * プリンターテストリクエスト作成
-     */
-    public async createPrinterTestRequest() {
+    private async createTestPrinterRequest() {
         let request = '';
-        const printImage = await this.createPrintTestImage({ size: { width: 560, height: 730 } });
-        // canvas確認
-        // await this.createPrintTestImageToCanvas({
-        //     size: { width: 560, height: 730 }
-        // });
-        // return;
-        request = this.builder.createBitImageElement(printImage);
+        const canvas = await createTestPrintImage();
+
+        request = this.builder.createBitImageElement({
+            context: canvas.getContext('2d'),
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        });
         // 紙を切断
         request += this.builder.createCutPaperElement({ feed: true, type: 'partial' });
 
@@ -269,45 +209,22 @@ export class StarPrintService {
     /**
      * プリンターリクエストリスト作成
      */
-    public async createPrinterRequestList(args: {
-        order: factory.order.IOrder;
-    }) {
-        const orderNumber = args.order.orderNumber;
-        const customer = {
-            // email: args.order.customer.email,
-            telephone: args.order.customer.telephone
-        };
-        await this.cinerino.getServices();
-        const order = await this.createOrder(orderNumber, customer);
+    private async createPrinterRequestList(orders: factory.order.IOrder[]) {
         const printerRequests = [];
-        for (let i = 0; i < args.order.acceptedOffers.length; i++) {
-            const printerRequest = await this.createPrinterRequest({ order, offerIndex: i });
-            printerRequests.push(printerRequest);
+        for (const order of orders) {
+            for (let i = 0; i < order.acceptedOffers.length; i++) {
+                const printerRequest = await this.createPrinterRequest({ order, offerIndex: i });
+                printerRequests.push(printerRequest);
+            }
         }
 
         return printerRequests;
     }
 
-    public async createOrder(
-        orderNumber: string,
-        customer: { email?: string | undefined; telephone?: string | undefined; }
-    ) {
-        const order = await retry<factory.order.IOrder>({
-            process: (async () => {
-                const result = await this.cinerino.order.authorizeOwnershipInfos({ orderNumber, customer });
-                return result;
-            }),
-            interval: 5000,
-            limit: 5
-        });
-
-        return order;
-    }
-
     /**
      * 印刷
      */
-    public async print(args: {
+    private async print(args: {
         printerRequest: string;
     }) {
         return new Promise<void>((resolve, reject) => {
@@ -346,115 +263,5 @@ export class StarPrintService {
         });
     }
 
-    private async draw(args: {
-        canvas: HTMLCanvasElement,
-        size: { width: number; height: number; },
-        data: {
-            confirmationNumber: number;
-            theaterName: string;
-            screenName: string;
-            eventName: string;
-            startDate: string;
-            seatNumber: string;
-            ticketName: string;
-            price: number;
-            qrcode: string;
-        }
-    }) {
-        const canvas = args.canvas;
-        const data = args.data;
-        canvas.width = args.size.width;
-        canvas.height = args.size.height;
-        const context = canvas.getContext('2d');
-        if (context === null) {
-            throw new Error('context is null');
-        }
-        const drawImage = (drawImageArgs: {
-            image: HTMLImageElement;
-            x: number;
-            y: number;
-            width: number;
-            height: number;
-        }) => {
-            return new Promise((resolve) => {
-                drawImageArgs.image.onload = () => {
-                    context.drawImage(
-                        drawImageArgs.image,
-                        drawImageArgs.x,
-                        drawImageArgs.y,
-                        drawImageArgs.width,
-                        drawImageArgs.height
-                    );
-                    resolve();
-                };
-            });
-        };
-        const left = 0;
-        const right = canvas.width;
-        const bottom = args.size.height;
-        const center = canvas.width / 2;
-        const font = `"Hiragino Sans", "Hiragino Kaku Gothic ProN", "游ゴシック  Medium", meiryo, sans-serif`;
-        // ロゴ
-        const logoImage = new Image();
-        logoImage.src = '/assets/images/logo.svg';
-        await drawImage({ image: logoImage, x: (canvas.width / 2) - 100, y: 5, width: 40, height: 40 });
 
-        // 劇場
-        context.fillStyle = 'black';
-        context.font = `bold 34px ${font}`;
-        context.textAlign = 'left';
-        context.fillText(data.theaterName, (canvas.width / 2) - (100 - 35 - 15), 35);
-        // 鑑賞日時
-        context.font = `normal 40px ${font}`;
-        context.textAlign = 'center';
-        context.fillText(`${data.startDate}～`, center, 110);
-        context.strokeStyle = '#000';
-        // 作品名
-        context.font = `bold 40px ${font}`;
-        const title = data.eventName;
-        const titleLimit = 18;
-        if (title.length > titleLimit) {
-            context.fillText(title.slice(0, titleLimit), center, 180);
-            context.fillText(title.slice(titleLimit, title.length), center, 230);
-        } else {
-            context.fillText(title, center, 180);
-        }
-        // 背景
-        const boxImage = new Image();
-        boxImage.src = '/assets/images/print_box.svg';
-        await drawImage({ image: boxImage, x: 0, y: 270, width: canvas.width, height: 210 });
-        // スクリーン
-        context.beginPath();
-        context.font = `bold 40px ${font}`;
-        context.fillText(data.screenName, center, 340);
-        // 座席
-        context.beginPath();
-        context.fillText(data.seatNumber, center, 440);
-        // 券種
-        context.textAlign = 'left';
-        context.font = `normal 40px ${font}`;
-        context.fillText(data.ticketName.slice(0, 8), 0, 540);
-        // 金額
-        context.textAlign = 'right';
-        context.fillText('￥' + data.price.toLocaleString(), right, 540);
-        // QR
-        const qrcodeCanvas = document.createElement('canvas');
-        await qrcode.toCanvas(qrcodeCanvas, data.qrcode);
-        context.drawImage(qrcodeCanvas, (canvas.width - 170), (bottom - 170), 170, 170);
-        // 説明
-        context.textAlign = 'left';
-        context.font = `normal 22px ${font}`;
-        context.fillText('■ 上記日時1回限り有効', left, bottom - 140);
-        context.fillText('■ 変更、払戻不可', left, bottom - 110);
-        // 購入番号
-        context.font = `normal 22px ${font}`;
-        context.fillText(`購入番号 ${data.confirmationNumber}`, left, bottom - 60);
-        // 端末
-        context.fillText(`端末 TEST`, left, bottom - 30);
-        // 発券時間
-        const date = moment().format('YYYY/MM/DD HH:mm');
-        context.fillText(`(${date} 発券)`, left, bottom);
-
-        return context;
-    }
 }

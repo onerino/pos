@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -12,10 +12,15 @@ export class ConfirmModalComponent implements OnInit {
     @Input() public body: string;
 
     constructor(
-        public activeModal: NgbActiveModal
+        public activeModal: NgbActiveModal,
+        private elementRef: ElementRef
     ) { }
 
     public ngOnInit() {
+        const element: HTMLElement = this.elementRef.nativeElement.querySelector('.scroll-vertical');
+        setTimeout(() => {
+            element.scrollTop = 0;
+        }, 0);
     }
 
 }

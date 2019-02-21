@@ -7,7 +7,8 @@ import { IPrinter } from '../../models';
  */
 export enum ActionTypes {
     Delete = '[User] Delete',
-    UpdateAll = '[User] Update All'
+    UpdateAll = '[User] Update All',
+    UpdateLanguage = '[User] Update Language',
 }
 
 /**
@@ -19,7 +20,7 @@ export class Delete implements Action {
 }
 
 /**
- * Update
+ * UpdateAll
  */
 export class UpdateAll implements Action {
     public readonly type = ActionTypes.UpdateAll;
@@ -31,9 +32,19 @@ export class UpdateAll implements Action {
     }) { }
 }
 
+
+/**
+ * UpdateLanguage
+ */
+export class UpdateLanguage implements Action {
+    public readonly type = ActionTypes.UpdateLanguage;
+    constructor(public payload: { language: string }) { }
+}
+
 /**
  * Actions
  */
 export type Actions =
     | Delete
-    | UpdateAll;
+    | UpdateAll
+    | UpdateLanguage;

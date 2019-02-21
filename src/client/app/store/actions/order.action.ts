@@ -125,7 +125,7 @@ export class InquiryFail implements Action {
 export class Print implements Action {
     public readonly type = ActionTypes.Print;
     constructor(public payload: {
-        orders?: factory.order.IOrder[];
+        orders: factory.order.IOrder[];
         printer: IPrinter;
         pos?: factory.seller.IPOS;
         timeout?: number;

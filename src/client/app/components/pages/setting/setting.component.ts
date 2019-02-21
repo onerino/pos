@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import * as libphonenumber from 'libphonenumber-js';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { printers } from '../../../models';
+import { connectionType, printers } from '../../../models';
 import { LibphonenumberFormatPipe } from '../../../pipes/libphonenumber-format.pipe';
+import { UtilService } from '../../../services';
 import * as masterAction from '../../../store/actions/master.action';
 import * as orderAction from '../../../store/actions/order.action';
 import * as userAction from '../../../store/actions/user.action';
 import * as reducers from '../../../store/reducers';
-import { AlertModalComponent } from '../../parts/alert-modal/alert-modal.component';
 
 @Component({
     selector: 'app-setting',
@@ -27,12 +27,14 @@ export class SettingComponent implements OnInit {
     public error: Observable<string | null>;
     public posList: { id: string; name: string; typeOf: string; }[];
     public printers: typeof printers = printers;
+    public connectionType: typeof connectionType = connectionType;
     constructor(
         private actions: Actions,
         private formBuilder: FormBuilder,
         private store: Store<reducers.IState>,
-        private modal: NgbModal,
-        private router: Router
+        private util: UtilService,
+        private router: Router,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -93,8 +95,8 @@ export class SettingComponent implements OnInit {
                     return null;
                 }
             ]],
-            printerId: [''],
-            printerIpAddress: ['', [Validators.required]]
+            printerType: [''],
+            printerIpAddress: ['']
         });
         this.user.subscribe((user) => {
             if (user.movieTheater !== undefined
@@ -112,7 +114,7 @@ export class SettingComponent implements OnInit {
                 this.settingForm.controls.telephone.setValue(new LibphonenumberFormatPipe().transform(user.customerContact.telephone));
             }
             if (user.printer !== undefined) {
-                this.settingForm.controls.printerId.setValue(user.printer.id);
+                this.settingForm.controls.printerType.setValue(user.printer.connectionType);
                 this.settingForm.controls.printerIpAddress.setValue(user.printer.ipAddress);
             }
         }).unsubscribe();
@@ -163,10 +165,10 @@ export class SettingComponent implements OnInit {
             this.settingForm.controls[key].markAsTouched();
         });
         if (this.settingForm.invalid) {
-            this.openAlert({
-                title: 'エラー',
+            this.util.openAlert({
+                title: this.translate.instant('common.error'),
                 body: `
-                    <p class="mb-4">入力内容に誤りがあります。</p>
+                    <p class="mb-4">${this.translate.instant('setting.alert.validation')}</p>
                         <div class="p-3 bg-light-gray select-text">
                         <code>${JSON.stringify(this.settingForm.errors)}</code>
                     </div>`
@@ -197,12 +199,12 @@ export class SettingComponent implements OnInit {
                 },
                 printer: {
                     ipAddress: this.settingForm.controls.printerIpAddress.value,
-                    id: this.settingForm.controls.printerId.value
+                    connectionType: this.settingForm.controls.printerType.value
                 }
             }));
-            this.openAlert({
-                title: '完了',
-                body: '設定を保存しました。'
+            this.util.openAlert({
+                title: this.translate.instant('common.complete'),
+                body: this.translate.instant('setting.alert.success')
             });
 
         }).unsubscribe();
@@ -211,10 +213,10 @@ export class SettingComponent implements OnInit {
 
     public print() {
         const printer = {
-            id: this.settingForm.controls.printerId.value,
+            connectionType: this.settingForm.controls.printerType.value,
             ipAddress: this.settingForm.controls.printerIpAddress.value
         };
-        this.store.dispatch(new orderAction.Print({ printer }));
+        this.store.dispatch(new orderAction.Print({ orders: [], printer }));
 
         const success = this.actions.pipe(
             ofType(orderAction.ActionTypes.PrintSuccess),
@@ -225,10 +227,10 @@ export class SettingComponent implements OnInit {
             ofType(orderAction.ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
-                    this.openAlert({
-                        title: 'エラー',
+                    this.util.openAlert({
+                        title: this.translate.instant('common.error'),
                         body: `
-                        <p class="mb-4">印刷に失敗しました</p>
+                        <p class="mb-4">${this.translate.instant('setting.alert.print')}</p>
                             <div class="p-3 bg-light-gray select-text">
                             <code>${error}</code>
                         </div>`
@@ -237,17 +239,6 @@ export class SettingComponent implements OnInit {
             })
         );
         race(success, fail).pipe(take(1)).subscribe();
-    }
-
-    public openAlert(args: {
-        title: string;
-        body: string;
-    }) {
-        const modalRef = this.modal.open(AlertModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
     }
 
 }

@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getTicketPrice, IEventOrder, orderToEventOrders } from '../../../../functions';
+import { UtilService } from '../../../../services';
 import { ActionTypes, Print } from '../../../../store/actions/order.action';
 import * as reducers from '../../../../store/reducers';
-import { AlertModalComponent } from '../../../parts/alert-modal/alert-modal.component';
 
 @Component({
     selector: 'app-purchase-complete',
@@ -29,7 +29,8 @@ export class PurchaseCompleteComponent implements OnInit {
         private store: Store<reducers.IState>,
         private actions: Actions,
         private router: Router,
-        private modal: NgbModal
+        private util: UtilService,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -74,10 +75,10 @@ export class PurchaseCompleteComponent implements OnInit {
             ofType(ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
-                    this.openAlert({
-                        title: 'エラー',
+                    this.util.openAlert({
+                        title: this.translate.instant('common.error'),
                         body: `
-                        <p class="mb-4">印刷に失敗しました</p>
+                        <p class="mb-4">${this.translate.instant('purchase.complete.alert.print')}</p>
                             <div class="p-3 bg-light-gray select-text">
                             <code>${error}</code>
                         </div>`
@@ -86,17 +87,6 @@ export class PurchaseCompleteComponent implements OnInit {
             })
         );
         race(success, fail).pipe(take(1)).subscribe();
-    }
-
-    public openAlert(args: {
-        title: string;
-        body: string;
-    }) {
-        const modalRef = this.modal.open(AlertModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
     }
 
 }

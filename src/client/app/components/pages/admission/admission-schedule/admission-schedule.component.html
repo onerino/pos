@@ -1,13 +1,13 @@
 <div class="contents-width mx-auto px-3 py-5">
-    <h2 class="text-large mb-4 text-center font-weight-bold">入場スケジュール選択</h2>
-    <p class="mb-4">入場スケジュールを選択してください</p>
+    <h2 class="text-large mb-4 text-center font-weight-bold">{{ 'admission.schedule.title' | translate }}</h2>
+    <p class="mb-4">{{ 'admission.schedule.read' | translate }}</p>
     <div class="mb-3">
         <input type="date" class="form-control rounded-0 text-large" name="date" [(ngModel)]="scheduleDate"
             (change)="selectDate()">
     </div>
-    <p *ngIf="(admission | async).scheduleDate" class="text-primary text-large mb-3">{{ moment((admission |
-        async).scheduleDate).format('YYYY/MM/DD (ddd)') }}</p>
-    <p *ngIf="screeningFilmEvents.length === 0" class="mb-3">スケジュールがありません。</p>
+    <p *ngIf="(admission | async).scheduleDate" class="text-primary text-large mb-3">{{ (admission |
+        async).scheduleDate | formatDate: 'YYYY/MM/DD (ddd)' }}</p>
+    <p *ngIf="screeningFilmEvents.length === 0" class="mb-3">{{ 'admission.schedule.notfound' | translate }}</p>
     <app-admission-schedule-film *ngFor="let screeningFilmEvent of screeningFilmEvents"
         [screeningFilmEvent]="screeningFilmEvent" (select)="selectSchedule($event)" class="mb-3"></app-admission-schedule-film>
 </div>

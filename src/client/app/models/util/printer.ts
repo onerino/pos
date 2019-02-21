@@ -3,13 +3,21 @@
  */
 export enum connectionType {
     /**
-     * LAN接続
+     * なし
      */
-    'LAN',
+    'None' = 'None',
     /**
-     * Bluetooth接続
+     * 画像
      */
-    'Bluetooth'
+    'Image' = 'Image',
+    /**
+     * スター精密 LAN接続
+     */
+    'StarLAN' = 'StarLAN',
+    /**
+     * スター精密 Bluetooth接続
+     */
+    'StarBluetooth' = 'StarBluetooth',
 }
 
 /**
@@ -17,18 +25,24 @@ export enum connectionType {
  */
 export const printers = [
     {
-        id: '001',
-        connectionType: connectionType.LAN,
+        connectionType: connectionType.None,
+        name: { ja: '印刷しない', en: 'Do not print' }
+    },
+    {
+        connectionType: connectionType.Image,
+        name: { ja: '画像表示', en: 'Image display' }
+    },
+    {
+        connectionType: connectionType.StarLAN,
         name: { ja: 'スター精密 LAN接続', en: 'Star precision LAN connection' }
     },
     {
-        id: '002',
-        connectionType: connectionType.Bluetooth,
+        connectionType: connectionType.StarBluetooth,
         name: { ja: 'スター精密 Bluetooth接続', en: 'Star precision Bluetooth connection' }
     }
 ];
 
 export interface IPrinter {
-    id: string;
+    connectionType: connectionType;
     ipAddress: string;
 }

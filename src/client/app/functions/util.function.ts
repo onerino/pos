@@ -27,6 +27,10 @@ export function toHalf(value: string) {
     });
 }
 
+/**
+ * リトライ
+ * @param args
+ */
 export async function retry<T>(args: {
     process: Function;
     interval: number;
@@ -55,5 +59,17 @@ export async function retry<T>(args: {
         } catch (error) {
             timerProcess();
         }
+    });
+}
+
+/**
+ * ミリ秒待ち
+ * @param time
+ */
+export async function sleep(time: number) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve();
+        }, time);
     });
 }

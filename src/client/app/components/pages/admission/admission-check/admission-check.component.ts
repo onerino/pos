@@ -1,16 +1,15 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// import { factory } from '@cinerino/api-javascript-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import jsqr from 'jsqr';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { UtilService } from '../../../../services';
 import * as admissionAction from '../../../../store/actions/admission.action';
 import * as reducers from '../../../../store/reducers';
-import { AlertModalComponent } from '../../../parts/alert-modal/alert-modal.component';
 
 @Component({
     selector: 'app-admission-check',
@@ -33,7 +32,8 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         private store: Store<reducers.IState>,
         private actions: Actions,
         private router: Router,
-        private modal: NgbModal
+        private util: UtilService,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -91,7 +91,7 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
             this.isShowVideo = true;
         } catch (error) {
             console.error(error);
-            alert('カメラへのアクセスに失敗しました。');
+            alert(this.translate.instant('admission.check.alert.camera'));
         }
     }
 
@@ -127,75 +127,6 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         return qrcode.data;
     }
 
-    // public getScreeningEventReservations() {
-    //     this.admission.subscribe((admission) => {
-    //         const screeningEvent = admission.screeningEvent;
-    //         if (screeningEvent === undefined) {
-    //             this.router.navigate(['/error']);
-    //             return;
-    //         }
-    //         this.store.dispatch(new admissionAction.GetScreeningEventReservations({
-    //             params: {
-    //                 sort: { reservationNumber: factory.chevre.sortType.Ascending },
-    //                 reservationStatuses: [
-    //                     factory.chevre.reservationStatusType.ReservationConfirmed
-    //                     // factory.chevre.reservationStatusType.ReservationCancelled,
-    //                     // factory.chevre.reservationStatusType.ReservationHold,
-    //                     // factory.chevre.reservationStatusType.ReservationPending
-    //                 ],
-    //                 reservationFor: {
-    //                     typeOf: factory.chevre.eventType.ScreeningEvent,
-    //                     id: screeningEvent.id
-    //                 }
-    //             }
-    //         }));
-    //     }).unsubscribe();
-
-    //     const success = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.GetScreeningEventReservationsSuccess),
-    //         tap(() => { })
-    //     );
-
-    //     const fail = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.GetScreeningEventReservationsFail),
-    //         tap(() => {
-    //             this.router.navigate(['/error']);
-    //         })
-    //     );
-    //     race(success, fail).pipe(take(1)).subscribe();
-    // }
-
-    // /**
-    //  * QRコードをトークンへ変換
-    //  * @param {string} code
-    //  */
-    // public convertQrcodeToToken(code: string) {
-    //     this.admission.subscribe((admission) => {
-    //         const screeningEventReservations = admission.screeningEventReservations;
-    //         this.store.dispatch(new admissionAction.ConvertQrcodeToToken({
-    //             params: { code, screeningEventReservations }
-    //         }));
-    //     }).unsubscribe();
-
-    //     const success = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenSuccess),
-    //         tap(() => {
-    //             this.send();
-    //         })
-    //     );
-
-    //     const fail = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.ConvertQrcodeToTokenFail),
-    //         tap(() => {
-    //             this.openAlert({
-    //                 title: 'エラー',
-    //                 body: '読み込みに失敗しました。'
-    //             });
-    //         })
-    //     );
-    //     race(success, fail).pipe(take(1)).subscribe();
-    // }
-
     /**
      * QRコードから入場を確認
      * @param {string} code
@@ -225,9 +156,9 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         const fail = this.actions.pipe(
             ofType(admissionAction.ActionTypes.CheckFail),
             tap(() => {
-                this.openAlert({
-                    title: 'エラー',
-                    body: '読み込みに失敗しました。'
+                this.util.openAlert({
+                    title: this.translate.instant('common.error'),
+                    body: this.translate.instant('admission.check.alert.check')
                 });
             })
         );
@@ -265,64 +196,6 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
             tap(() => { })
         );
         race(success, fail).pipe(take(1)).subscribe();
-    }
-
-    // public send() {
-    //     this.admission.subscribe((admission) => {
-    //         const qrcodeToken = admission.qrcodeToken;
-    //         if (qrcodeToken === undefined
-    //             || qrcodeToken.token === undefined
-    //             || qrcodeToken.decodeResult === undefined) {
-    //             return;
-    //         }
-    //         const token = qrcodeToken.token;
-    //         const decodeResult = qrcodeToken.decodeResult;
-    //         this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
-    //     }).unsubscribe();
-
-    //     const success = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.AdmissionSuccess),
-    //         tap(() => { })
-    //     );
-
-    //     const fail = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.AdmissionFail),
-    //         tap(() => { })
-    //     );
-    //     race(success, fail).pipe(take(1)).subscribe();
-    // }
-
-    // public sendAll() {
-    //     this.admission.subscribe((admission) => {
-    //         const usentList = admission.usentList;
-    //         usentList.forEach((usent) => {
-    //             const token = usent.token;
-    //             const decodeResult = usent.decodeResult;
-    //             this.store.dispatch(new admissionAction.Admission({ token, decodeResult }));
-    //         });
-    //     }).unsubscribe();
-
-    //     const success = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.AdmissionSuccess),
-    //         tap(() => { })
-    //     );
-
-    //     const fail = this.actions.pipe(
-    //         ofType(admissionAction.ActionTypes.AdmissionFail),
-    //         tap(() => { })
-    //     );
-    //     race(success, fail).pipe(take(1)).subscribe();
-    // }
-
-    public openAlert(args: {
-        title: string;
-        body: string;
-    }) {
-        const modalRef = this.modal.open(AlertModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
     }
 
 }

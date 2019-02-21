@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { factory } from '@cinerino/api-javascript-client';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getTicketPrice, IEventOrder, orderToEventOrders } from '../../../../functions';
+import { UtilService } from '../../../../services';
 import { ActionTypes, Print } from '../../../../store/actions/order.action';
 import * as reducers from '../../../../store/reducers';
-import { AlertModalComponent } from '../../../parts/alert-modal/alert-modal.component';
 
 @Component({
     selector: 'app-inquiry-confirm',
@@ -24,12 +25,14 @@ export class InquiryConfirmComponent implements OnInit {
     public moment: typeof moment = moment;
     public getTicketPrice = getTicketPrice;
     public eventOrders: IEventOrder[];
+    public orderStatus: typeof factory.orderStatus = factory.orderStatus;
 
     constructor(
         private store: Store<reducers.IState>,
         private actions: Actions,
         private router: Router,
-        private modal: NgbModal
+        private util: UtilService,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -73,10 +76,10 @@ export class InquiryConfirmComponent implements OnInit {
             ofType(ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
-                    this.openAlert({
-                        title: 'エラー',
+                    this.util.openAlert({
+                        title: this.translate.instant('common.error'),
                         body: `
-                        <p class="mb-4">印刷に失敗しました</p>
+                        <p class="mb-4">${this.translate.instant('inquiry.confirm.alert.print')}</p>
                             <div class="p-3 bg-light-gray select-text">
                             <code>${error}</code>
                         </div>`
@@ -85,17 +88,6 @@ export class InquiryConfirmComponent implements OnInit {
             })
         );
         race(success, fail).pipe(take(1)).subscribe();
-    }
-
-    public openAlert(args: {
-        title: string;
-        body: string;
-    }) {
-        const modalRef = this.modal.open(AlertModalComponent, {
-            centered: true
-        });
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
     }
 
 }

@@ -1,4 +1,4 @@
-import { Reservation } from '../../models';
+import { ILanguage, Reservation } from '../../models';
 import * as admissionAction from '../actions/admission.action';
 import * as masterAction from '../actions/master.action';
 import * as orderAction from '../actions/order.action';
@@ -15,7 +15,7 @@ import * as userReducer from './user.reducer';
  */
 export interface IState {
     loading: boolean;
-    process: string;
+    process: ILanguage;
     error: string | null;
     purchaseData: purchaseReducer.IPurchaseState;
     userData: userReducer.IUserState;
@@ -29,7 +29,7 @@ export interface IState {
  */
 export const initialState: IState = {
     loading: false,
-    process: '',
+    process: { ja: '', en: '' },
     error: null,
     purchaseData: purchaseReducer.purchaseInitialState,
     userData: userReducer.userInitialState,
@@ -45,6 +45,9 @@ function getInitialState(): IState {
     }
     const tmpData: { App: IState } = JSON.parse(json);
     const data = { ...initialState, ...tmpData.App };
+    data.userData.language = (data.userData.language === undefined)
+        ? userReducer.userInitialState.language
+        : data.userData.language;
     const reservations = data.purchaseData.reservations.map((reservation: Reservation) => new Reservation(reservation));
     data.purchaseData.reservations = reservations;
 

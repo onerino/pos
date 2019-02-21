@@ -2,9 +2,9 @@
  * HeaderMenuComponent
  */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateService } from '@ngx-translate/core';
+import { UtilService } from '../../../services';
 import { CinerinoService } from '../../../services/cinerino.service';
-import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 @Component({
     selector: 'app-header-menu',
@@ -17,7 +17,8 @@ export class HeaderMenuComponent implements OnInit {
 
     constructor(
         private cinerino: CinerinoService,
-        private modal: NgbModal
+        private util: UtilService,
+        private translate: TranslateService
     ) { }
 
     public ngOnInit() {
@@ -25,10 +26,10 @@ export class HeaderMenuComponent implements OnInit {
 
     public signOut() {
         this.close.emit();
-        this.openConfirm({
-            title: '確認',
-            body: 'ログアウトしますか？',
-            done: async () => {
+        this.util.openConfirm({
+            title: this.translate.instant('common.confirm'),
+            body: this.translate.instant('menu.confirm.logout'),
+            cb: async () => {
                 try {
                     await this.cinerino.getServices();
                     await this.cinerino.signOut();
@@ -41,21 +42,4 @@ export class HeaderMenuComponent implements OnInit {
 
     }
 
-    private openConfirm(args: {
-        title: string;
-        body: string;
-        done: Function
-    }) {
-        const modalRef = this.modal.open(ConfirmModalComponent, {
-            centered: true
-        });
-        modalRef.result.then(async () => {
-            await args.done();
-        }).catch(() => {
-
-        });
-
-        modalRef.componentInstance.title = args.title;
-        modalRef.componentInstance.body = args.body;
-    }
 }

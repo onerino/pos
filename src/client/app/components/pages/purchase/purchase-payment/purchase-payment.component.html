@@ -1,19 +1,22 @@
 <div class="contents-width mx-auto px-3 py-5">
 
-    <h2 class="text-large mb-4 text-center font-weight-bold">決済方法選択</h2>
-    <p class="mb-4">決済方法を選択してください。</p>
+    <h2 class="text-large mb-4 text-center font-weight-bold">{{ 'purchase.payment.title' | translate }}</h2>
+    <p class="mb-4">{{ 'purchase.payment.read' | translate }}</p>
 
     <div class="payment-select d-grid mb-4">
-        <button type="button" class="btn btn-primary btn-block py-3 m-0" (click)="selectPaymentMethodType(paymentMethodType.Cash)">
-            <div class="mb-md-3"><i class="fas fa-yen-sign mr-2 d-md-none"></i>現金</div>
+        <button type="button" class="btn btn-primary btn-block py-3 m-0"
+            (click)="selectPaymentMethodType(paymentMethodType.Cash)">
+            <div class="mb-md-3"><i class="fas fa-yen-sign mr-2 d-md-none"></i>{{ 'purchase.payment.cash' | translate }}</div>
             <div class="image d-none d-md-block"><i class="fas fa-yen-sign"></i></div>
         </button>
-        <button type="button" class="btn btn-primary btn-block py-3 m-0" (click)="selectPaymentMethodType(paymentMethodType.CreditCard)">
-            <div class="mb-md-3"><i class="fas fa-credit-card mr-2 d-md-none"></i>クレジットカード</div>
+        <button type="button" class="btn btn-primary btn-block py-3 m-0"
+            (click)="selectPaymentMethodType(paymentMethodType.CreditCard)">
+            <div class="mb-md-3"><i class="fas fa-credit-card mr-2 d-md-none"></i>{{ 'purchase.payment.creditCard' | translate }}</div>
             <div class="image d-none d-md-block"><i class="fas fa-credit-card"></i></div>
         </button>
-        <button type="button" class="btn btn-primary btn-block py-3 m-0" (click)="selectPaymentMethodType(paymentMethodType.EMoney)">
-            <div class="mb-md-3"><i class="fas fa-mobile-alt mr-2 d-md-none"></i>電子マネー</div>
+        <button type="button" class="btn btn-primary btn-block py-3 m-0"
+            (click)="selectPaymentMethodType(paymentMethodType.EMoney)">
+            <div class="mb-md-3"><i class="fas fa-mobile-alt mr-2 d-md-none"></i>{{ 'purchase.payment.eMoney' | translate }}</div>
             <div class="image d-none d-md-block"><i class="fas fa-mobile-alt"></i></div>
         </button>
         <!-- <button type="button" class="btn btn-primary btn-block py-3 m-0">
@@ -23,6 +26,7 @@
     </div>
 
     <div class="buttons mx-auto">
-        <button type="button" class="btn btn-outline-primary btn-block py-3" routerLink="/purchase/cart">購入確認へ戻る</button>
+        <button type="button" class="btn btn-outline-primary btn-block py-3"
+            routerLink="/purchase/cart">{{ 'purchase.payment.prev' | translate }}</button>
     </div>
 </div>
