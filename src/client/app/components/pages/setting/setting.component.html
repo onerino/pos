@@ -10,7 +10,7 @@
                         <div class="col-md-8">
                             <select class="form-control" formControlName="theaterCode" (change)="changePosList()">
                                 <option value="">{{ 'setting.unselected' | translate }}</option>
-                                <option *ngFor="let theater of (master | async).movieTheaters"
+                                <option *ngFor="let theater of (master | async).sellers"
                                     [value]="theater.location.branchCode">{{
                                     theater.name.ja }}</option>
                             </select>
@@ -149,6 +149,36 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="row">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'setting.limitedPurchaseCount' | translate }}</p>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" formControlName="limitedPurchaseCount"
+                                placeholder="1">
+                            <div *ngIf="settingForm.controls.limitedPurchaseCount.invalid && settingForm.controls.limitedPurchaseCount.touched"
+                                class="mt-2">
+                                <p *ngIf="settingForm.controls.limitedPurchaseCount.errors.required" class="text-danger">
+                                    {{ 'form.validation.required' | translate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'setting.viewType' | translate }}</p>
+                        <div class="col-md-8">
+                            <select class="form-control" id="viewType" formControlName="viewType">
+                                <option [value]="ViewType.Cinema">{{ ViewType.Cinema }}</option>
+                                <option [value]="ViewType.Event">{{ ViewType.Event }}</option>
+                            </select>
+                            <div *ngIf="settingForm.controls.viewType.invalid && settingForm.controls.viewType.touched"
+                                class="mt-2">
+                                <p *ngIf="settingForm.controls.viewType.errors.required" class="text-danger">
+                                    {{ 'form.validation.required' | translate }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
@@ -157,7 +187,7 @@
         <button type="button" class="btn btn-primary btn-block py-3"
             (click)="onSubmit()">{{ 'setting.next' | translate }}</button>
         <button type="button" class="btn btn-outline-primary btn-block py-3"
-            routerLink="/purchase/schedule">{{ 'setting.prev' | translate }}</button>
+            routerLink="/purchase/root">{{ 'setting.prev' | translate }}</button>
     </div>
 
 </div>

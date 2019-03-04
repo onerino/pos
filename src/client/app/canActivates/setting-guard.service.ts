@@ -26,8 +26,8 @@ export class SettingGuardService implements CanActivate {
         try {
             this.user = this.store.pipe(select(reducers.getUser));
             const user = await this.getUser();
-            if (user.movieTheater === undefined) {
-                throw new Error('user.movieTheater is undefined');
+            if (user.seller === undefined) {
+                throw new Error('user.seller is undefined');
             }
 
             return true;

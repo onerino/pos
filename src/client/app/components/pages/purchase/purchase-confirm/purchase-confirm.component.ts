@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getAmount, getTicketPrice } from '../../../../functions';
+import { ViewType } from '../../../../models';
 import { UtilService } from '../../../../services';
 import {
     ActionTypes,
@@ -29,6 +30,7 @@ export class PurchaseConfirmComponent implements OnInit {
     public user: Observable<reducers.IUserState>;
     public moment: typeof moment = moment;
     public paymentMethodType: typeof factory.paymentMethodType = factory.paymentMethodType;
+    public viewType: typeof ViewType = ViewType;
     public depositAmount: string;
     public amount: number;
     public getTicketPrice = getTicketPrice;

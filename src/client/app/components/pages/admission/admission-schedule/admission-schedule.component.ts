@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { SwiperComponent, SwiperConfigInterface, SwiperDirective } from 'ngx-swiper-wrapper';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { IScreeningEventFilm, screeningEventsToFilmEvents } from '../../../../functions';
+import { IScreeningEventWork, screeningEventsToWorkEvents } from '../../../../functions';
 import * as admissionAction from '../../../../store/actions/admission.action';
 import * as masterAction from '../../../../store/actions/master.action';
 import * as reducers from '../../../../store/reducers';
@@ -26,7 +26,7 @@ import * as reducers from '../../../../store/reducers';
     public user: Observable<reducers.IUserState>;
     public swiperConfig: SwiperConfigInterface;
     public scheduleDates: string[];
-    public screeningFilmEvents: IScreeningEventFilm[];
+    public screeningWorkEvents: IScreeningEventWork[];
     public moment: typeof moment = moment;
     public scheduleDate: string;
     private updateTimer: any;
@@ -50,7 +50,7 @@ import * as reducers from '../../../../store/reducers';
         this.admission = this.store.pipe(select(reducers.getAdmission));
         this.master = this.store.pipe(select(reducers.getMaster));
         this.user = this.store.pipe(select(reducers.getUser));
-        this.screeningFilmEvents = [];
+        this.screeningWorkEvents = [];
         this.scheduleDates = [];
         for (let i = 0; i < 7; i++) {
             this.scheduleDates.push(moment().add(i, 'day').format('YYYY-MM-DD'));
@@ -84,16 +84,16 @@ import * as reducers from '../../../../store/reducers';
      */
     public selectDate() {
         this.user.subscribe((user) => {
-            const movieTheater = user.movieTheater;
+            const seller = user.seller;
             if (this.scheduleDate === undefined || this.scheduleDate === '') {
                 this.scheduleDate = moment().format('YYYY-MM-DD');
             }
             const scheduleDate = this.scheduleDate;
-            if (movieTheater === undefined) {
+            if (seller === undefined) {
                 return;
             }
             this.store.dispatch(new admissionAction.SelectScheduleDate({ scheduleDate }));
-            this.store.dispatch(new masterAction.GetSchedule({ movieTheater, scheduleDate }));
+            this.store.dispatch(new masterAction.GetSchedule({ seller, scheduleDate }));
         }).unsubscribe();
 
         const success = this.actions.pipe(
@@ -101,7 +101,7 @@ import * as reducers from '../../../../store/reducers';
             tap(() => {
                 this.master.subscribe((master) => {
                     const screeningEvents = master.screeningEvents;
-                    this.screeningFilmEvents = screeningEventsToFilmEvents({ screeningEvents });
+                    this.screeningWorkEvents = screeningEventsToWorkEvents({ screeningEvents });
                     this.update();
                 }).unsubscribe();
              })

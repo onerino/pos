@@ -12,7 +12,7 @@ import { Actions, ActionTypes } from '../actions/purchase.action';
  * IPurchaseState
  */
 export interface IPurchaseState {
-    movieTheater?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
     screeningEvent?: factory.chevre.event.screeningEvent.IEvent;
     scheduleDate?: string;
     transaction?: factory.transaction.placeOrder.ITransaction;
@@ -84,9 +84,9 @@ export function reducer(state: IState, action: Actions): IState {
             state.purchaseData.isUsedMovieTicket = false;
             return { ...state };
         }
-        case ActionTypes.SelectTheater: {
-            const movieTheater = action.payload.movieTheater;
-            state.purchaseData.movieTheater = movieTheater;
+        case ActionTypes.SelectSeller: {
+            const seller = action.payload.seller;
+            state.purchaseData.seller = seller;
             return { ...state, loading: false, process: { ja: '', en: '' }, error: null };
         }
         case ActionTypes.SelectScheduleDate: {
@@ -241,26 +241,43 @@ export function reducer(state: IState, action: Actions): IState {
             const error = action.payload.error;
             return { ...state, loading: false, process: { ja: '', en: '' }, error: JSON.stringify(error) };
         }
-        case ActionTypes.CancelTemporaryReservation: {
-            return { ...state, loading: true, process: { ja: '座席の仮予約を削除しています', en: 'Deleting the tentative reservation of the seat' }, };
+        case ActionTypes.TemporaryReservationFreeSeat: {
+            return { ...state, loading: true, process: { ja: '仮予約しています', en: 'Temporary reservation' }, };
         }
-        case ActionTypes.CancelTemporaryReservationSuccess: {
-            const authorizeSeatReservation = action.payload.authorizeSeatReservation;
-            const findAuthorizeSeatReservation = state.purchaseData.authorizeSeatReservations.findIndex(
-                target => target.id === authorizeSeatReservation.id
-            );
-            if (findAuthorizeSeatReservation > -1) {
-                state.purchaseData.authorizeSeatReservations.splice(findAuthorizeSeatReservation, 1);
-            }
-            const findPendingMovieTicket = state.purchaseData.pendingMovieTickets.findIndex(
-                target => target.id === authorizeSeatReservation.id
-            );
-            if (findPendingMovieTicket > -1) {
-                state.purchaseData.pendingMovieTickets.splice(findPendingMovieTicket, 1);
-            }
+        case ActionTypes.TemporaryReservationFreeSeatSuccess: {
+            const addAuthorizeSeatReservation = action.payload.addAuthorizeSeatReservation;
+            state.purchaseData.authorizeSeatReservation = addAuthorizeSeatReservation;
+            state.purchaseData.screeningEventOffers = [];
+            state.purchaseData.authorizeSeatReservation = undefined;
+            state.purchaseData.authorizeSeatReservations.push(addAuthorizeSeatReservation);
             return { ...state, loading: false, process: { ja: '', en: '' }, error: null };
         }
-        case ActionTypes.CancelTemporaryReservationFail: {
+        case ActionTypes.TemporaryReservationFreeSeatFail: {
+            const error = action.payload.error;
+            return { ...state, loading: false, process: { ja: '', en: '' }, error: JSON.stringify(error) };
+        }
+        case ActionTypes.CancelTemporaryReservations: {
+            return { ...state, loading: true, process: { ja: '座席の仮予約を削除しています', en: 'Deleting the tentative reservation of the seat' }, };
+        }
+        case ActionTypes.CancelTemporaryReservationsSuccess: {
+            const authorizeSeatReservations = action.payload.authorizeSeatReservations;
+            authorizeSeatReservations.forEach((authorizeSeatReservation) => {
+                const findAuthorizeSeatReservation = state.purchaseData.authorizeSeatReservations.findIndex(
+                    target => target.id === authorizeSeatReservation.id
+                );
+                if (findAuthorizeSeatReservation > -1) {
+                    state.purchaseData.authorizeSeatReservations.splice(findAuthorizeSeatReservation, 1);
+                }
+                const findPendingMovieTicket = state.purchaseData.pendingMovieTickets.findIndex(
+                    target => target.id === authorizeSeatReservation.id
+                );
+                if (findPendingMovieTicket > -1) {
+                    state.purchaseData.pendingMovieTickets.splice(findPendingMovieTicket, 1);
+                }
+            });
+            return { ...state, loading: false, process: { ja: '', en: '' }, error: null };
+        }
+        case ActionTypes.CancelTemporaryReservationsFail: {
             const error = action.payload.error;
             return { ...state, loading: false, process: { ja: '', en: '' }, error: JSON.stringify(error) };
         }

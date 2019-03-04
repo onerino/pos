@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { ILanguage, Reservation } from '../../models';
 import * as admissionAction from '../actions/admission.action';
 import * as masterAction from '../actions/master.action';
@@ -39,7 +40,7 @@ export const initialState: IState = {
 };
 
 function getInitialState(): IState {
-    const json = localStorage.getItem('state');
+    const json = localStorage.getItem(environment.STORAGE_NAME);
     if (json === undefined || json === null) {
         return initialState;
     }

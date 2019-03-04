@@ -6,17 +6,20 @@
     <div class="payment-select d-grid mb-4">
         <button type="button" class="btn btn-primary btn-block py-3 m-0"
             (click)="selectPaymentMethodType(paymentMethodType.Cash)">
-            <div class="mb-md-3"><i class="fas fa-yen-sign mr-2 d-md-none"></i>{{ 'purchase.payment.cash' | translate }}</div>
+            <div class="mb-md-3"><i class="fas fa-yen-sign mr-2 d-md-none"></i>{{ 'purchase.payment.cash' | translate }}
+            </div>
             <div class="image d-none d-md-block"><i class="fas fa-yen-sign"></i></div>
         </button>
         <button type="button" class="btn btn-primary btn-block py-3 m-0"
             (click)="selectPaymentMethodType(paymentMethodType.CreditCard)">
-            <div class="mb-md-3"><i class="fas fa-credit-card mr-2 d-md-none"></i>{{ 'purchase.payment.creditCard' | translate }}</div>
+            <div class="mb-md-3"><i
+                    class="fas fa-credit-card mr-2 d-md-none"></i>{{ 'purchase.payment.creditCard' | translate }}</div>
             <div class="image d-none d-md-block"><i class="fas fa-credit-card"></i></div>
         </button>
         <button type="button" class="btn btn-primary btn-block py-3 m-0"
             (click)="selectPaymentMethodType(paymentMethodType.EMoney)">
-            <div class="mb-md-3"><i class="fas fa-mobile-alt mr-2 d-md-none"></i>{{ 'purchase.payment.eMoney' | translate }}</div>
+            <div class="mb-md-3"><i
+                    class="fas fa-mobile-alt mr-2 d-md-none"></i>{{ 'purchase.payment.eMoney' | translate }}</div>
             <div class="image d-none d-md-block"><i class="fas fa-mobile-alt"></i></div>
         </button>
         <!-- <button type="button" class="btn btn-primary btn-block py-3 m-0">
@@ -26,7 +29,18 @@
     </div>
 
     <div class="buttons mx-auto">
-        <button type="button" class="btn btn-outline-primary btn-block py-3"
-            routerLink="/purchase/cart">{{ 'purchase.payment.prev' | translate }}</button>
+        <div *ngIf="(user | async).viewType === viewType.Cinema">
+            <button *ngIf="(user | async).limitedPurchaseCount > 1" type="button"
+                class="btn btn-outline-primary btn-block py-3"
+                routerLink="/purchase/cinema/cart">{{ 'purchase.payment.prev' | translate }}</button>
+            <button *ngIf="(user | async).limitedPurchaseCount === 1" type="button"
+                class="btn btn-outline-primary btn-block py-3"
+                routerLink="/purchase/cinema/ticket">{{ 'purchase.payment.prev' | translate }}</button>
+        </div>
+        <div *ngIf="(user | async).viewType === viewType.Event">
+            <button type="button" class="btn btn-outline-primary btn-block py-3"
+                routerLink="/purchase/event/ticket">{{ 'purchase.payment.prev' | translate }}</button>
+        </div>
+
     </div>
 </div>

@@ -4,7 +4,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
-const log = debug('pos:benchmark');
+const log = debug('frontend:benchmark');
 exports.default = (req, _, next) => {
     if (process.env.NODE_ENV === 'development') {
         const startMemory = process.memoryUsage();

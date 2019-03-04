@@ -7,7 +7,7 @@
     </div>
     <p *ngIf="(admission | async).scheduleDate" class="text-primary text-large mb-3">{{ (admission |
         async).scheduleDate | formatDate: 'YYYY/MM/DD (ddd)' }}</p>
-    <p *ngIf="screeningFilmEvents.length === 0" class="mb-3">{{ 'admission.schedule.notfound' | translate }}</p>
-    <app-admission-schedule-film *ngFor="let screeningFilmEvent of screeningFilmEvents"
-        [screeningFilmEvent]="screeningFilmEvent" (select)="selectSchedule($event)" class="mb-3"></app-admission-schedule-film>
+    <p *ngIf="screeningWorkEvents.length === 0" class="mb-3">{{ 'admission.schedule.notfound' | translate }}</p>
+    <app-admission-schedule-work *ngFor="let screeningWorkEvent of screeningWorkEvents"
+        [screeningWorkEvent]="screeningWorkEvent" (select)="selectSchedule($event)" class="mb-3"></app-admission-schedule-work>
 </div>

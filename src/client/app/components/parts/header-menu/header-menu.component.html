@@ -2,7 +2,7 @@
 
 <div class="menu text-white bg-dark" [class.active]="isOpen">
     <ul>
-        <li class="p-3 border-bottom pointer" routerLink="/purchase/schedule" (click)="close.emit()"><i class="fas fa-shopping-cart mr-2"></i>{{ 'menu.purchase' | translate }}</li>
+        <li class="p-3 border-bottom pointer" routerLink="/purchase/root" (click)="close.emit()"><i class="fas fa-shopping-cart mr-2"></i>{{ 'menu.purchase' | translate }}</li>
         <li class="p-3 border-bottom pointer" routerLink="/inquiry/input" (click)="close.emit()"><i class="fas fa-search mr-2"></i>{{ 'menu.inquiry' | translate }}</li>
         <li class="p-3 border-bottom pointer" routerLink="/order/list" (click)="close.emit()"><i class="far fa-list-alt mr-2"></i>{{ 'menu.orderSearch' | translate }}</li>
         <li class="p-3 border-bottom" routerLink="/admission/schedule" (click)="close.emit()"><i class="far fa-check-circle mr-2"></i>{{ 'menu.admission' | translate }}</li>

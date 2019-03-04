@@ -125,10 +125,10 @@ export class OrderListComponent implements OnInit {
             this.store.dispatch(new Search({
                 params: {
                     seller: {
-                        typeOf: (user.movieTheater === undefined)
-                            ? undefined : user.movieTheater.typeOf,
-                        ids: (user.movieTheater === undefined)
-                            ? undefined : [user.movieTheater.id]
+                        typeOf: (user.seller === undefined)
+                            ? undefined : user.seller.typeOf,
+                        ids: (user.seller === undefined)
+                            ? undefined : [user.seller.id]
                     },
                     customer: {
                         email: (this.confirmedConditions.customer.email === '')

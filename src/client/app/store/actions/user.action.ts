@@ -1,6 +1,6 @@
 import { factory } from '@cinerino/api-javascript-client';
 import { Action } from '@ngrx/store';
-import { IPrinter } from '../../models';
+import { IPrinter, ViewType } from '../../models';
 
 /**
  * Action types
@@ -25,10 +25,12 @@ export class Delete implements Action {
 export class UpdateAll implements Action {
     public readonly type = ActionTypes.UpdateAll;
     constructor(public payload: {
-        movieTheater: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+        seller: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
         pos: any;
         customerContact: factory.transaction.placeOrder.ICustomerContact;
         printer: IPrinter;
+        limitedPurchaseCount: number;
+        viewType: ViewType;
     }) { }
 }
 

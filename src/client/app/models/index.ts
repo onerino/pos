@@ -6,3 +6,4 @@ export * from './admission/decodeResult';
 export * from './util/printer';
 export * from './order/action';
 export * from './util/language';
+export * from './util/viewType';

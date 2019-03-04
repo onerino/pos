@@ -78,7 +78,20 @@
         <div class="buttons mx-auto">
             <button type="button" class="btn btn-primary btn-block py-3 mb-3" [disabled]="isLoading | async"
                 (click)="onSubmit()">{{ 'purchase.confirm.next' | translate }}</button>
-            <button type="button" class="btn btn-outline-primary btn-block py-3"
+            <button *ngIf="amount > 0" type="button" class="btn btn-outline-primary btn-block py-3"
                 routerLink="/purchase/payment">{{ 'purchase.confirm.prev' | translate }}</button>
+            <div *ngIf="amount === 0 && (user | async).viewType === viewType.Cinema">
+                <button *ngIf="(user | async).limitedPurchaseCount > 1" type="button"
+                    class="btn btn-outline-primary btn-block py-3"
+                    routerLink="/purchase/cinema/cart">{{ 'purchase.confirm.prev' | translate }}</button>
+                <button *ngIf="(user | async).limitedPurchaseCount === 1" type="button"
+                    class="btn btn-outline-primary btn-block py-3"
+                    routerLink="/purchase/cinema/ticket">{{ 'purchase.confirm.prev' | translate }}</button>
+            </div>
+            <div *ngIf="amount === 0 && (user | async).viewType === viewType.Event">
+                <button type="button"
+                    class="btn btn-outline-primary btn-block py-3"
+                    routerLink="/purchase/event/ticket">{{ 'purchase.confirm.prev' | translate }}</button>
+            </div>
         </div>
     </div>

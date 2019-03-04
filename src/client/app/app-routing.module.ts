@@ -3,13 +3,15 @@
  */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BaseComponent } from './components/pages/base/base.component';
-import { CongestionComponent } from './components/pages/congestion/congestion.component';
-import { ErrorComponent } from './components/pages/error/error.component';
-import { ExpiredComponent } from './components/pages/expired/expired.component';
-import { MaintenanceComponent } from './components/pages/maintenance/maintenance.component';
-import { NotfoundComponent } from './components/pages/notfound/notfound.component';
-import { SettingComponent } from './components/pages/setting/setting.component';
+import {
+    BaseComponent,
+    CongestionComponent,
+    ErrorComponent,
+    ExpiredComponent,
+    MaintenanceComponent,
+    NotfoundComponent,
+    SettingComponent
+} from './components/pages';
 import * as admission from './routes/admission.route';
 import * as auth from './routes/auth.route';
 import * as inquiry from './routes/inquiry.route';

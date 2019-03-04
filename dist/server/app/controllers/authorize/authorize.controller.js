@@ -15,13 +15,14 @@ const debug = require("debug");
 const auth_model_1 = require("../../models/auth/auth.model");
 const auth2_model_1 = require("../../models/auth2/auth2.model");
 const base_controller_1 = require("../base/base.controller");
-const log = debug('pos:authorize');
+const log = debug('frontend:authorize');
 function getCredentials(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         log('getCredentials');
         try {
             let authModel;
             let userName;
+            const endpoint = process.env.API_ENDPOINT;
             if (req.body.member === '0') {
                 authModel = new auth_model_1.AuthModel();
             }
@@ -32,18 +33,15 @@ function getCredentials(req, res) {
                 throw new Error('member does not macth MemberType');
             }
             const options = {
-                endpoint: process.env.SSKTS_API_ENDPOINT,
+                endpoint,
                 auth: authModel.create()
             };
             const accessToken = yield options.auth.getAccessToken();
             if (req.body.member === '1') {
                 userName = options.auth.verifyIdToken({}).getUsername();
             }
-            res.json({
-                accessToken: accessToken,
-                userName: userName,
-                clientId: options.auth.options.clientId
-            });
+            const clientId = options.auth.options.clientId;
+            res.json({ accessToken, userName, clientId, endpoint });
         }
         catch (err) {
             base_controller_1.errorProsess(res, err);

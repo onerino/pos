@@ -4,6 +4,7 @@ import { factory } from '@cinerino/api-javascript-client';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { ViewType } from '../../../../models';
 import { UtilService } from '../../../../services';
 import { SelectPaymentMethodType } from '../../../../store/actions/purchase.action';
 import * as reducers from '../../../../store/reducers';
@@ -16,6 +17,7 @@ import * as reducers from '../../../../store/reducers';
 export class PurchasePaymentComponent implements OnInit {
     public user: Observable<reducers.IUserState>;
     public paymentMethodType: typeof factory.paymentMethodType = factory.paymentMethodType;
+    public viewType: typeof ViewType = ViewType;
 
     constructor(
         private store: Store<reducers.IState>,
@@ -30,13 +32,13 @@ export class PurchasePaymentComponent implements OnInit {
 
     public selectPaymentMethodType(paymentMethodType: factory.paymentMethodType | string) {
         this.user.subscribe((user) => {
-            if (user.movieTheater === undefined
-                || user.movieTheater.paymentAccepted === undefined) {
+            if (user.seller === undefined
+                || user.seller.paymentAccepted === undefined) {
                 this.router.navigate(['/error']);
-                console.error('movieTheater is undefined or paymentAccepted is undefined');
+                console.error('seller is undefined or paymentAccepted is undefined');
                 return;
             }
-            const findResult = user.movieTheater.paymentAccepted
+            const findResult = user.seller.paymentAccepted
                 .find(paymentAccepted => paymentAccepted.paymentMethodType === paymentMethodType);
             if (findResult === undefined) {
                 this.util.openAlert({

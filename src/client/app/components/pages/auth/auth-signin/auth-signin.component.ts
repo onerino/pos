@@ -20,7 +20,7 @@ export class AuthSigninComponent implements OnInit {
     public ngOnInit() {
         this.store.dispatch(new orderAction.Delete());
         this.store.dispatch(new purchaseAction.Delete());
-        this.router.navigate(['/purchase/schedule']);
+        this.router.navigate(['/purchase/root']);
     }
 
 }

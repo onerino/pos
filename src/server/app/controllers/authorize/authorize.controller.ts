@@ -6,13 +6,14 @@ import { NextFunction, Request, Response } from 'express';
 import { AuthModel } from '../../models/auth/auth.model';
 import { Auth2Model } from '../../models/auth2/auth2.model';
 import { errorProsess } from '../base/base.controller';
-const log = debug('pos:authorize');
+const log = debug('frontend:authorize');
 
 export async function getCredentials(req: Request, res: Response) {
     log('getCredentials');
     try {
         let authModel;
         let userName;
+        const endpoint = <string>process.env.API_ENDPOINT;
         if (req.body.member === '0') {
             authModel = new AuthModel();
         } else if (req.body.member === '1') {
@@ -21,18 +22,15 @@ export async function getCredentials(req: Request, res: Response) {
             throw new Error('member does not macth MemberType');
         }
         const options = {
-            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            endpoint,
             auth: authModel.create()
         };
         const accessToken = await options.auth.getAccessToken();
         if (req.body.member === '1') {
             userName = options.auth.verifyIdToken(<any>{}).getUsername();
         }
-        res.json({
-            accessToken: accessToken,
-            userName: userName,
-            clientId: options.auth.options.clientId
-        });
+        const clientId = options.auth.options.clientId;
+        res.json({ accessToken, userName, clientId, endpoint });
     } catch (err) {
         errorProsess(res, err);
     }

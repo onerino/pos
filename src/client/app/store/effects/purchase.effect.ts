@@ -113,22 +113,79 @@ export class PurchaseEffects {
     );
 
     /**
-     * cancelTemporaryReservation
+     * temporaryReservationFreeSeat
      */
     @Effect()
-    public cancelTemporaryReservation = this.actions.pipe(
-        ofType<purchase.CancelTemporaryReservation>(purchase.ActionTypes.CancelTemporaryReservation),
+    public temporaryReservationFreeSeat = this.actions.pipe(
+        ofType<purchase.TemporaryReservationFreeSeat>(purchase.ActionTypes.TemporaryReservationFreeSeat),
         map(action => action.payload),
         mergeMap(async (payload) => {
-            const authorizeSeatReservation = payload.authorizeSeatReservation;
+            const transaction = payload.transaction;
+            const screeningEvent = payload.screeningEvent;
+            const reservationTickets = payload.reservationTickets;
             try {
                 await this.cinerino.getServices();
-                await this.cinerino.transaction.placeOrder.voidSeatReservation(authorizeSeatReservation);
-
-                return new purchase.CancelTemporaryReservationSuccess({ authorizeSeatReservation });
+                const screeningEventOffers = await this.cinerino.event.searchScreeningEventOffers({
+                    eventId: payload.screeningEvent.id
+                });
+                const freeSeats: factory.chevre.reservation.ISeat[] = [];
+                for (const screeningEventOffer of screeningEventOffers) {
+                    const section = screeningEventOffer.branchCode;
+                    for (const containsPlace of screeningEventOffer.containsPlace) {
+                        if (containsPlace.offers !== undefined
+                            && containsPlace.offers[0].availability === factory.chevre.itemAvailability.InStock) {
+                                freeSeats.push({
+                                    typeOf: containsPlace.typeOf,
+                                    seatingType: <any>containsPlace.seatingType,
+                                    seatNumber: containsPlace.branchCode,
+                                    seatRow: '',
+                                    seatSection: section
+                                });
+                        }
+                    }
+                }
+                const authorizeSeatReservation = await this.cinerino.transaction.placeOrder.authorizeSeatReservation({
+                    object: {
+                        event: {
+                            id: screeningEvent.id
+                        },
+                        acceptedOffer: reservationTickets.map((ticket, index) => {
+                            return {
+                                id: ticket.ticketOffer.id,
+                                ticketedSeat: freeSeats[index],
+                                additionalProperty: [] // ここにムビチケ情報を入れる
+                            };
+                        })
+                    },
+                    purpose: transaction
+                });
+                return new purchase.TemporaryReservationFreeSeatSuccess({
+                    addAuthorizeSeatReservation: authorizeSeatReservation
+                });
             } catch (error) {
-                return new purchase.CancelTemporaryReservationSuccess({ authorizeSeatReservation });
-                // return new purchase.CancelTemporaryReservationFail({ error: error });
+                return new purchase.TemporaryReservationFreeSeatFail({ error: error });
+            }
+        })
+    );
+
+    /**
+     * cancelTemporaryReservations
+     */
+    @Effect()
+    public cancelTemporaryReservations = this.actions.pipe(
+        ofType<purchase.CancelTemporaryReservations>(purchase.ActionTypes.CancelTemporaryReservations),
+        map(action => action.payload),
+        mergeMap(async (payload) => {
+            try {
+                const authorizeSeatReservations = payload.authorizeSeatReservations;
+                await this.cinerino.getServices();
+                for (const authorizeSeatReservation of authorizeSeatReservations) {
+                    await this.cinerino.transaction.placeOrder.voidSeatReservation(authorizeSeatReservation);
+                }
+
+                return new purchase.CancelTemporaryReservationsSuccess({ authorizeSeatReservations });
+            } catch (error) {
+                return new purchase.CancelTemporaryReservationsFail({ error: error });
             }
         })
     );
@@ -146,10 +203,10 @@ export class PurchaseEffects {
                 await this.cinerino.getServices();
                 const clientId = this.cinerino.auth.options.clientId;
                 const screeningEvent = payload.screeningEvent;
-                const movieTheater = payload.movieTheater;
+                const seller = payload.seller;
                 const screeningEventTicketOffers = await this.cinerino.event.searchScreeningEventTicketOffers({
                     event: { id: screeningEvent.id },
-                    seller: { typeOf: movieTheater.typeOf, id: movieTheater.id },
+                    seller: { typeOf: seller.typeOf, id: seller.id },
                     store: { id: clientId }
                 });
 
