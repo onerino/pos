@@ -35,11 +35,10 @@
             <div class="py-3">
                 <div class="row">
                     <p class="mb-2 mb-md-0 col-md-4">
-                        <i class="fas fa-ticket-alt mr-2"></i>{{ 'common.seat' | translate }} /
-                        {{ 'common.ticket' | translate }}</p>
+                        <i class="fas fa-ticket-alt mr-2"></i><span *ngIf="authorizeSeatReservation.object.event.offers?.itemOffered.serviceOutput?.reservedTicket?.ticketedSeat">{{ 'common.seat' | translate }} / </span>{{ 'common.ticket' | translate }}</p>
                     <div class="col-md-8">
                         <div *ngFor="let acceptedOffer of authorizeSeatReservation.object.acceptedOffer" class="mb-2">
-                            <p>{{ acceptedOffer.ticketedSeat.seatNumber }}</p>
+                            <p *ngIf="acceptedOffer.itemOffered.serviceOutput.reservedTicket.ticketedSeat">{{ acceptedOffer.ticketedSeat.seatNumber }}</p>
                             <p>{{ acceptedOffer.name | changeLanguage }} / {{
                                         getTicketPrice(acceptedOffer).single | currency : 'JPY' }}</p>
                         </div>
@@ -81,10 +80,10 @@
             <button *ngIf="amount > 0" type="button" class="btn btn-outline-primary btn-block py-3"
                 routerLink="/purchase/payment">{{ 'purchase.confirm.prev' | translate }}</button>
             <div *ngIf="amount === 0 && (user | async).viewType === viewType.Cinema">
-                <button *ngIf="(user | async).limitedPurchaseCount > 1" type="button"
+                <button *ngIf="(user | async).purchaseCartMaxLength > 1" type="button"
                     class="btn btn-outline-primary btn-block py-3"
                     routerLink="/purchase/cinema/cart">{{ 'purchase.confirm.prev' | translate }}</button>
-                <button *ngIf="(user | async).limitedPurchaseCount === 1" type="button"
+                <button *ngIf="(user | async).purchaseCartMaxLength === 1" type="button"
                     class="btn btn-outline-primary btn-block py-3"
                     routerLink="/purchase/cinema/ticket">{{ 'purchase.confirm.prev' | translate }}</button>
             </div>

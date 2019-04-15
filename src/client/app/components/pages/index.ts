@@ -10,3 +10,4 @@ export * from './notfound/notfound.component';
 export * from './order/order-list/order-list.component';
 export * from './purchase/index';
 export * from './setting/setting.component';
+export * from './development/index';

@@ -4,6 +4,7 @@ import { factory } from '@cinerino/api-javascript-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { SERVICE_UNAVAILABLE, TOO_MANY_REQUESTS } from 'http-status';
 import * as moment from 'moment';
 import { SwiperComponent, SwiperConfigInterface, SwiperDirective } from 'ngx-swiper-wrapper';
@@ -11,8 +12,8 @@ import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { IScreeningEventWork, screeningEventsToWorkEvents } from '../../../../../functions';
-import * as masterAction from '../../../../../store/actions/master.action';
-import * as purchaseAction from '../../../../../store/actions/purchase.action';
+import { UtilService } from '../../../../../services';
+import { masterAction, purchaseAction } from '../../../../../store/actions';
 import * as reducers from '../../../../../store/reducers';
 import { PurchaseTransactionModalComponent } from '../../../../parts';
 
@@ -39,7 +40,9 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         private store: Store<reducers.IState>,
         private actions: Actions,
         private router: Router,
-        private modal: NgbModal
+        private util: UtilService,
+        private modal: NgbModal,
+        private translate: TranslateService
     ) { }
 
     public async ngOnInit() {
@@ -68,87 +71,55 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         clearTimeout(this.updateTimer);
     }
 
-    private cancelTemporaryReservations() {
-        this.purchase.subscribe((purchase) => {
-            if (purchase.seller === undefined) {
-                this.router.navigate(['/error']);
-                return;
-            }
-
-            const authorizeSeatReservations = purchase.authorizeSeatReservations;
-            this.store.dispatch(new purchaseAction.CancelTemporaryReservations({ authorizeSeatReservations }));
-        }).unsubscribe();
-
-
-        const success = this.actions.pipe(
-            ofType(purchaseAction.ActionTypes.CancelTemporaryReservationsSuccess),
-            tap(() => {
-                this.startTransaction();
-            })
-        );
-
-        const fail = this.actions.pipe(
-            ofType(purchaseAction.ActionTypes.CancelTemporaryReservationsFail),
-            tap(() => {
-                this.store.dispatch(new purchaseAction.UnsettledDelete());
-                this.startTransaction();
-            })
-        );
-        race(success, fail).pipe(take(1)).subscribe();
+    /**
+     * 仮予約削除
+     */
+    private async cancelTemporaryReservations() {
+        return new Promise((resolve, reject) => {
+            this.purchase.subscribe((purchase) => {
+                const authorizeSeatReservations = purchase.authorizeSeatReservations;
+                this.store.dispatch(new purchaseAction.CancelTemporaryReservations({ authorizeSeatReservations }));
+            }).unsubscribe();
+            const success = this.actions.pipe(
+                ofType(purchaseAction.ActionTypes.CancelTemporaryReservationsSuccess),
+                tap(() => { resolve(); })
+            );
+            const fail = this.actions.pipe(
+                ofType(purchaseAction.ActionTypes.CancelTemporaryReservationsFail),
+                tap(() => { this.error.subscribe((error) => reject(error)).unsubscribe(); })
+            );
+            race(success, fail).pipe(take(1)).subscribe();
+        });
     }
 
-    private startTransaction() {
-        this.user.subscribe((user) => {
-            if (user.seller === undefined) {
-                this.router.navigate(['/error']);
-                return;
-            }
-
-            this.store.dispatch(new purchaseAction.StartTransaction({
-                params: {
-                    expires: moment().add(environment.TRANSACTION_TIME, 'minutes').toDate(),
-                    seller: {
-                        typeOf: user.seller.typeOf,
-                        id: user.seller.id
-                    },
-                    object: {}
+    /**
+     * 取引開始
+     */
+    private async startTransaction() {
+        return new Promise((resolve, reject) => {
+            this.user.subscribe((user) => {
+                if (user.seller === undefined) {
+                    reject(null);
+                    return;
                 }
-            }));
-        }).unsubscribe();
-
-
-        const success = this.actions.pipe(
-            ofType(purchaseAction.ActionTypes.StartTransactionSuccess),
-            tap(() => {
-                this.router.navigate(['/purchase/cinema/seat']);
-            })
-        );
-
-        const fail = this.actions.pipe(
-            ofType(purchaseAction.ActionTypes.StartTransactionFail),
-            tap(() => {
-                this.error.subscribe((error) => {
-                    try {
-                        if (error === null) {
-                            throw new Error('error is null');
-                        }
-                        const errorObject = JSON.parse(error);
-                        if (errorObject.status === TOO_MANY_REQUESTS) {
-                            this.router.navigate(['/congestion']);
-                            return;
-                        }
-                        if (errorObject.status === SERVICE_UNAVAILABLE) {
-                            this.router.navigate(['/maintenance']);
-                            return;
-                        }
-                        throw new Error('error status not match');
-                    } catch (error2) {
-                        this.router.navigate(['/error']);
+                this.store.dispatch(new purchaseAction.StartTransaction({
+                    params: {
+                        expires: moment().add(environment.TRANSACTION_TIME, 'minutes').toDate(),
+                        seller: { typeOf: user.seller.typeOf, id: user.seller.id },
+                        object: {}
                     }
-                }).unsubscribe();
-            })
-        );
-        race(success, fail).pipe(take(1)).subscribe();
+                }));
+            }).unsubscribe();
+            const success = this.actions.pipe(
+                ofType(purchaseAction.ActionTypes.StartTransactionSuccess),
+                tap(() => { resolve(); })
+            );
+            const fail = this.actions.pipe(
+                ofType(purchaseAction.ActionTypes.StartTransactionFail),
+                tap(() => { this.error.subscribe((error) => reject(error)).unsubscribe(); })
+            );
+            race(success, fail).pipe(take(1)).subscribe();
+        });
     }
 
     private update() {
@@ -182,7 +153,14 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
                 return;
             }
             this.store.dispatch(new purchaseAction.SelectScheduleDate({ scheduleDate }));
-            this.store.dispatch(new masterAction.GetSchedule({ seller, scheduleDate }));
+            this.store.dispatch(new masterAction.GetSchedule({
+                superEvent: {
+                    locationBranchCodes:
+                        (seller.location === undefined || seller.location.branchCode === undefined) ? [] : [seller.location.branchCode]
+                },
+                startFrom: moment(scheduleDate).toDate(),
+                startThrough: moment(scheduleDate).add(1, 'day').toDate()
+            }));
         }).unsubscribe();
 
         const success = this.actions.pipe(
@@ -213,28 +191,49 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
             || screeningEvent.remainingAttendeeCapacity === 0) {
             return;
         }
+        if (screeningEvent.offers === undefined
+            || screeningEvent.offers.itemOffered.serviceOutput === undefined
+            || screeningEvent.offers.itemOffered.serviceOutput.reservedTicket === undefined
+            || screeningEvent.offers.itemOffered.serviceOutput.reservedTicket.ticketedSeat === undefined) {
+            this.util.openAlert({
+                title: this.translate.instant('common.error'),
+                body: this.translate.instant('purchase.cinema.schedule.alert.ticketedSeat')
+            });
+            return;
+        }
         this.store.dispatch(new purchaseAction.UnsettledDelete());
         this.store.dispatch(new purchaseAction.SelectSchedule({ screeningEvent }));
         this.purchase.subscribe((purchase) => {
-            this.user.subscribe((user) => {
+            this.user.subscribe(async (user) => {
                 if (user.seller === undefined) {
                     this.router.navigate(['/error']);
                     return;
                 }
-
-                if (user.limitedPurchaseCount === 1) {
-                    if (purchase.authorizeSeatReservations.length > 0) {
-                        this.cancelTemporaryReservations();
-                        return;
-                    }
-                }
-                if (user.limitedPurchaseCount > 1
+                if (user.purchaseCartMaxLength > 1
                     && purchase.transaction !== undefined
                     && purchase.authorizeSeatReservations.length > 0) {
                     this.openTransactionModal();
                     return;
                 }
-                this.startTransaction();
+                try {
+                    await this.cancelTemporaryReservations();
+                    await this.startTransaction();
+                    this.router.navigate(['/purchase/cinema/seat']);
+                } catch (error) {
+                    if (error === null) {
+                        throw new Error('error is null');
+                    }
+                    const errorObject = JSON.parse(error);
+                    if (errorObject.status === TOO_MANY_REQUESTS) {
+                        this.router.navigate(['/congestion']);
+                        return;
+                    }
+                    if (errorObject.status === SERVICE_UNAVAILABLE) {
+                        this.router.navigate(['/maintenance']);
+                        return;
+                    }
+                    this.router.navigate(['/error']);
+                }
             }).unsubscribe();
         }).unsubscribe();
     }

@@ -3,6 +3,7 @@
  */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 import { UtilService } from '../../../services';
 import { CinerinoService } from '../../../services/cinerino.service';
 
@@ -37,9 +38,11 @@ export class HeaderMenuComponent implements OnInit {
                     console.error(err);
                 }
             }
-
         });
+    }
 
+    public isVisible(value: string) {
+        return (environment.ROUTE_SCOPE.find(r => r === value) !== undefined);
     }
 
 }

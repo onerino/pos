@@ -10,7 +10,7 @@ import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { OrderActions } from '../../../../models';
 import { UtilService } from '../../../../services';
-import { ActionTypes, Cancel, Delete, Print, Search } from '../../../../store/actions/order.action';
+import { orderAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 import { OrderDetailModalComponent } from '../../../parts/order-detail-modal/order-detail-modal.component';
 
@@ -87,7 +87,7 @@ export class OrderListComponent implements OnInit {
             orderStatuses: '',
             page: 1
         };
-        this.store.dispatch(new Delete());
+        this.store.dispatch(new orderAction.Delete());
     }
 
     public isSelected(order: factory.order.IOrder) {
@@ -122,7 +122,7 @@ export class OrderListComponent implements OnInit {
             };
         }
         this.user.subscribe((user) => {
-            this.store.dispatch(new Search({
+            this.store.dispatch(new orderAction.Search({
                 params: {
                     seller: {
                         typeOf: (user.seller === undefined)
@@ -158,12 +158,12 @@ export class OrderListComponent implements OnInit {
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.SearchSuccess),
+            ofType(orderAction.ActionTypes.SearchSuccess),
             tap(() => { })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.SearchFail),
+            ofType(orderAction.ActionTypes.SearchFail),
             tap(() => {
                 this.router.navigate(['/error']);
             })
@@ -211,17 +211,17 @@ export class OrderListComponent implements OnInit {
      * キャンセル処理
      */
     public cancel(orders: factory.order.IOrder[]) {
-        this.store.dispatch(new Cancel({ orders }));
+        this.store.dispatch(new orderAction.Cancel({ orders }));
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.CancelSuccess),
+            ofType(orderAction.ActionTypes.CancelSuccess),
             tap(() => {
                 this.orderSearch(false);
             })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.CancelFail),
+            ofType(orderAction.ActionTypes.CancelFail),
             tap(() => {
                 this.error.subscribe((error) => {
                     this.util.openAlert({
@@ -250,16 +250,16 @@ export class OrderListComponent implements OnInit {
             }
             const pos = user.pos;
             const printer = user.printer;
-            this.store.dispatch(new Print({ orders, pos, printer }));
+            this.store.dispatch(new orderAction.Print({ orders, pos, printer }));
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.PrintSuccess),
+            ofType(orderAction.ActionTypes.PrintSuccess),
             tap(() => { })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.PrintFail),
+            ofType(orderAction.ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
                     this.util.openAlert({

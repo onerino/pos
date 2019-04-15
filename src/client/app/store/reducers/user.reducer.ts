@@ -2,7 +2,7 @@ import { factory } from '@cinerino/api-javascript-client';
 import { IState } from '.';
 import { environment } from '../../../environments/environment';
 import { IPrinter, ViewType } from '../../models';
-import { Actions, ActionTypes } from '../actions/user.action';
+import { userAction } from '../actions';
 
 export interface IUserState {
     seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
@@ -10,13 +10,13 @@ export interface IUserState {
     customerContact?: factory.transaction.placeOrder.ICustomerContact;
     printer?: IPrinter;
     language: string;
-    limitedPurchaseCount: number;
+    purchaseCartMaxLength: number;
     viewType: ViewType;
 }
 
 export const userInitialState: IUserState = {
     language: 'ja',
-    limitedPurchaseCount: Number(environment.LIMITED_PURCHASE_COUNT),
+    purchaseCartMaxLength: Number(environment.PURCHASE_CART_MAX_LENGTH),
     viewType: environment.VIEW_TYPE
 };
 
@@ -25,28 +25,28 @@ export const userInitialState: IUserState = {
  * @param state
  * @param action
  */
-export function reducer(state: IState, action: Actions): IState {
+export function reducer(state: IState, action: userAction.Actions): IState {
     switch (action.type) {
-        case ActionTypes.Delete: {
-            return { ...state, loading: false, process: { ja: '', en: '' } };
+        case userAction.ActionTypes.Delete: {
+            return { ...state, loading: false, process: '' };
         }
-        case ActionTypes.UpdateAll: {
+        case userAction.ActionTypes.UpdateAll: {
             const customerContact = action.payload.customerContact;
             const seller = action.payload.seller;
             const pos = action.payload.pos;
             const printer = action.payload.printer;
-            const limitedPurchaseCount = action.payload.limitedPurchaseCount;
+            const purchaseCartMaxLength = action.payload.purchaseCartMaxLength;
             const viewType = action.payload.viewType;
             state.userData.customerContact = customerContact;
             state.userData.seller = seller;
             state.userData.pos = pos;
             state.userData.printer = printer;
-            state.userData.limitedPurchaseCount = limitedPurchaseCount;
+            state.userData.purchaseCartMaxLength = purchaseCartMaxLength;
             state.userData.viewType = viewType;
 
-            return { ...state, loading: false, process: { ja: '', en: '' } };
+            return { ...state, loading: false, process: '' };
         }
-        case ActionTypes.UpdateLanguage: {
+        case userAction.ActionTypes.UpdateLanguage: {
             state.userData.language = action.payload.language;
             return { ...state };
         }

@@ -10,7 +10,7 @@ import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { UtilService } from '../../../../services';
-import { ActionTypes, CreateGmoTokenObject, RegisterContact } from '../../../../store/actions/purchase.action';
+import { purchaseAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -178,11 +178,11 @@ export class PurchaseInputComponent implements OnInit {
                 telephone: this.customerContactForm.controls.telephone.value,
                 email: this.customerContactForm.controls.email.value,
             };
-            this.store.dispatch(new RegisterContact({ transaction, contact }));
+            this.store.dispatch(new purchaseAction.RegisterContact({ transaction, contact }));
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.RegisterContactSuccess),
+            ofType(purchaseAction.ActionTypes.RegisterContactSuccess),
             tap(() => {
                 this.purchase.subscribe((purchase) => {
                     if (purchase.authorizeSeatReservation !== undefined
@@ -197,7 +197,7 @@ export class PurchaseInputComponent implements OnInit {
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.RegisterContactFail),
+            ofType(purchaseAction.ActionTypes.RegisterContactFail),
             tap(() => {
                 this.router.navigate(['/error']);
             })
@@ -214,7 +214,7 @@ export class PurchaseInputComponent implements OnInit {
                 this.router.navigate(['/error']);
                 return;
             }
-            this.store.dispatch(new CreateGmoTokenObject({
+            this.store.dispatch(new purchaseAction.CreateGmoTokenObject({
                 seller: purchase.seller,
                 creditCard: {
                     cardno: this.paymentForm.controls.cardNumber.value,
@@ -226,14 +226,14 @@ export class PurchaseInputComponent implements OnInit {
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.CreateGmoTokenObjectSuccess),
+            ofType(purchaseAction.ActionTypes.CreateGmoTokenObjectSuccess),
             tap(() => {
                 this.router.navigate(['/purchase/confirm']);
             })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.CreateGmoTokenObjectFail),
+            ofType(purchaseAction.ActionTypes.CreateGmoTokenObjectFail),
             tap(() => {
                 this.util.openAlert({
                     title: this.translate.instant('common.error'),

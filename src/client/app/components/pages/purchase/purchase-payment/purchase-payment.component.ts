@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { ViewType } from '../../../../models';
 import { UtilService } from '../../../../services';
-import { SelectPaymentMethodType } from '../../../../store/actions/purchase.action';
+import { purchaseAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -47,7 +47,7 @@ export class PurchasePaymentComponent implements OnInit {
                 });
                 return;
             }
-            this.store.dispatch(new SelectPaymentMethodType({ paymentMethodType }));
+            this.store.dispatch(new purchaseAction.SelectPaymentMethodType({ paymentMethodType }));
             this.router.navigate(['/purchase/confirm']);
         }).unsubscribe();
     }

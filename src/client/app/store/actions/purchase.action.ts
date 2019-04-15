@@ -137,7 +137,14 @@ export class StartTransactionFail implements Action {
  */
 export class GetScreen implements Action {
     public readonly type = ActionTypes.GetScreen;
-    constructor(public payload: { screeningEvent: factory.chevre.event.screeningEvent.IEvent }) { }
+    constructor(public payload: {
+        test: false;
+        screeningEvent: factory.chevre.event.screeningEvent.IEvent;
+    } | {
+        test: true;
+        theaterCode: string;
+        screenCode: string;
+    }) { }
 }
 
 /**

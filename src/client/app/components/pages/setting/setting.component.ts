@@ -7,12 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 import * as libphonenumber from 'libphonenumber-js';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import { connectionType, printers, ViewType } from '../../../models';
 import { LibphonenumberFormatPipe } from '../../../pipes/libphonenumber-format.pipe';
 import { UtilService } from '../../../services';
-import * as masterAction from '../../../store/actions/master.action';
-import * as orderAction from '../../../store/actions/order.action';
-import * as userAction from '../../../store/actions/user.action';
+import { masterAction, orderAction, userAction } from '../../../store/actions';
 import * as reducers from '../../../store/reducers';
 
 @Component({
@@ -28,7 +27,9 @@ export class SettingComponent implements OnInit {
     public posList: { id: string; name: string; typeOf: string; }[];
     public printers: typeof printers = printers;
     public connectionType: typeof connectionType = connectionType;
-    public ViewType: typeof ViewType = ViewType;
+    public viewType: typeof ViewType = ViewType;
+    public environment = environment;
+
     constructor(
         private actions: Actions,
         private formBuilder: FormBuilder,
@@ -54,7 +55,7 @@ export class SettingComponent implements OnInit {
         const TEL_MIN_LENGTH = 9;
 
         this.settingForm = this.formBuilder.group({
-            theaterCode: ['', [
+            sellerBranchCode: ['', [
                 Validators.required
             ]],
             posId: ['', [
@@ -98,7 +99,7 @@ export class SettingComponent implements OnInit {
             ]],
             printerType: [''],
             printerIpAddress: [''],
-            limitedPurchaseCount: ['', [
+            purchaseCartMaxLength: ['', [
                 Validators.required,
                 Validators.pattern(/^[0-9]+$/)
             ]],
@@ -109,13 +110,17 @@ export class SettingComponent implements OnInit {
         this.user.subscribe((user) => {
             if (user.seller !== undefined
                 && user.seller.location !== undefined) {
-                this.settingForm.controls.theaterCode.setValue(user.seller.location.branchCode);
+                this.settingForm.controls.sellerBranchCode.setValue(user.seller.location.branchCode);
             }
             if (user.pos !== undefined) {
                 this.changePosList();
                 this.settingForm.controls.posId.setValue(user.pos.id);
             }
-            if (user.customerContact !== undefined) {
+            if (user.customerContact !== undefined
+                && user.customerContact.familyName !== undefined
+                && user.customerContact.givenName !== undefined
+                && user.customerContact.email !== undefined
+                && user.customerContact.telephone !== undefined) {
                 this.settingForm.controls.familyName.setValue(user.customerContact.familyName);
                 this.settingForm.controls.givenName.setValue(user.customerContact.givenName);
                 this.settingForm.controls.email.setValue(user.customerContact.email);
@@ -125,22 +130,22 @@ export class SettingComponent implements OnInit {
                 this.settingForm.controls.printerType.setValue(user.printer.connectionType);
                 this.settingForm.controls.printerIpAddress.setValue(user.printer.ipAddress);
             }
-            this.settingForm.controls.limitedPurchaseCount.setValue(user.limitedPurchaseCount);
+            this.settingForm.controls.purchaseCartMaxLength.setValue(user.purchaseCartMaxLength);
             this.settingForm.controls.viewType.setValue(user.viewType);
         }).unsubscribe();
     }
 
     public changePosList() {
         this.settingForm.controls.posId.setValue('');
-        const theaterCode = this.settingForm.controls.theaterCode.value;
-        if (theaterCode === '') {
+        const sellerBranchCode = this.settingForm.controls.sellerBranchCode.value;
+        if (sellerBranchCode === '') {
             this.posList = [];
             return;
         }
         this.master.subscribe((master) => {
             const findTheater =
                 master.sellers.find(theater =>
-                    (theater.location !== undefined && theater.location.branchCode === theaterCode)
+                    (theater.location !== undefined && theater.location.branchCode === sellerBranchCode)
                 );
             if (findTheater === undefined) {
                 this.posList = [];
@@ -177,29 +182,24 @@ export class SettingComponent implements OnInit {
         if (this.settingForm.invalid) {
             this.util.openAlert({
                 title: this.translate.instant('common.error'),
-                body: `
-                    <p class="mb-4">${this.translate.instant('setting.alert.validation')}</p>
-                        <div class="p-3 bg-light-gray select-text">
-                        <code>${JSON.stringify(this.settingForm.errors)}</code>
-                    </div>`
+                body: this.translate.instant('setting.alert.validation')
             });
             return;
         }
         this.master.subscribe((master) => {
-            const findMovieTheater = master.sellers.find(theater =>
-                (theater.location !== undefined && theater.location.branchCode === this.settingForm.controls.theaterCode.value)
-            );
-            if (findMovieTheater === undefined) {
+            const findSeller = master.sellers.find((s) =>
+                (s.location !== undefined && s.location.branchCode === this.settingForm.controls.sellerBranchCode.value));
+            if (findSeller === undefined || findSeller.hasPOS === undefined) {
                 return;
             }
-            const findPos = (<any>findMovieTheater).hasPOS.find((pos: any) => {
+            const findPos = findSeller.hasPOS.find((pos: any) => {
                 return pos.id === this.settingForm.controls.posId.value;
             });
             if (findPos === undefined) {
                 return;
             }
             this.store.dispatch(new userAction.UpdateAll({
-                seller: findMovieTheater,
+                seller: findSeller,
                 pos: findPos,
                 customerContact: {
                     familyName: this.settingForm.controls.familyName.value,
@@ -211,7 +211,7 @@ export class SettingComponent implements OnInit {
                     ipAddress: this.settingForm.controls.printerIpAddress.value,
                     connectionType: this.settingForm.controls.printerType.value
                 },
-                limitedPurchaseCount: Number(this.settingForm.controls.limitedPurchaseCount.value),
+                purchaseCartMaxLength: Number(this.settingForm.controls.purchaseCartMaxLength.value),
                 viewType: this.settingForm.controls.viewType.value
             }));
             this.util.openAlert({

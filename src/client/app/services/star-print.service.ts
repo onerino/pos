@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { factory } from '@cinerino/api-javascript-client';
-import { createPrintImage, createTestPrintImage, sleep } from '../functions';
+import { sleep } from '../functions';
 import { connectionType, IPrinter, printers } from '../models';
 
 @Injectable({
@@ -30,21 +30,16 @@ export class StarPrintService {
      * 印刷処理
      */
     public async printProcess(args: {
-        orders: factory.order.IOrder[];
-        printer: IPrinter;
-        pos?: factory.seller.IPOS;
-        timeout?: number;
+        canvasList: HTMLCanvasElement[];
+        testFlg?: boolean;
     }) {
-        const orders = args.orders;
-        const printer = args.printer;
-        const pos = args.pos;
-        const timeout = (args.timeout === undefined) ? 60000 : args.timeout;
-        this.initialize({ printer, pos, timeout });
         let printerRequests: string[] = [];
-        if (orders.length === 0) {
-            printerRequests = await this.createTestPrinterRequest();
+        const canvasList = args.canvasList;
+        const testFlg = (args.testFlg === undefined) ? false : args.testFlg;
+        if (testFlg) {
+            printerRequests = await this.createTestPrinterRequest(canvasList[0]);
         } else {
-            printerRequests = await this.createPrinterRequestList(orders);
+            printerRequests = await this.createPrinterRequestList(canvasList);
         }
         // n分割配列へ変換
         const divide = 4;
@@ -70,12 +65,13 @@ export class StarPrintService {
     /**
      * 初期化
      */
-    private initialize(args: {
+    public initialize(args: {
         printer: IPrinter;
         pos?: factory.seller.IPOS;
         timeout?: number;
     }) {
         this.pos = args.pos;
+        const timeout = (args.timeout === undefined) ? 60000 : args.timeout;
         this.builder = new (<any>window).StarWebPrintBuilder();
         this.isReady = false;
 
@@ -101,7 +97,7 @@ export class StarPrintService {
             // trader設定
             this.trader = new (<any>window).StarWebPrintTrader({ url, papertype, blackmark_sensor });
             // プリンター通信タイムアウト
-            this.trader.timeout = (args.timeout === undefined) ? 10000 : args.timeout;
+            this.trader.timeout = timeout;
 
             this.isReady = true;
         } catch (error) {
@@ -164,15 +160,8 @@ export class StarPrintService {
     /**
      * プリンターリクエスト作成
      */
-    private async createPrinterRequest(args: {
-        order: factory.order.IOrder;
-        offerIndex: number;
-    }) {
+    private createPrinterRequest(canvas: HTMLCanvasElement) {
         let request = '';
-        const canvas = await createPrintImage({
-            order: args.order,
-            offerIndex: args.offerIndex
-        });
         request = this.builder.createBitImageElement({
             context: canvas.getContext('2d'),
             x: 0,
@@ -189,10 +178,8 @@ export class StarPrintService {
     /**
      * プリンターテスト用リクエスト作成
      */
-    private async createTestPrinterRequest() {
+    private async createTestPrinterRequest(canvas: HTMLCanvasElement) {
         let request = '';
-        const canvas = await createTestPrintImage();
-
         request = this.builder.createBitImageElement({
             context: canvas.getContext('2d'),
             x: 0,
@@ -209,13 +196,11 @@ export class StarPrintService {
     /**
      * プリンターリクエストリスト作成
      */
-    private async createPrinterRequestList(orders: factory.order.IOrder[]) {
+    private async createPrinterRequestList(canvasList: HTMLCanvasElement[]) {
         const printerRequests = [];
-        for (const order of orders) {
-            for (let i = 0; i < order.acceptedOffers.length; i++) {
-                const printerRequest = await this.createPrinterRequest({ order, offerIndex: i });
-                printerRequests.push(printerRequest);
-            }
+        for (const canvas of canvasList) {
+            const printerRequest = await this.createPrinterRequest(canvas);
+            printerRequests.push(printerRequest);
         }
 
         return printerRequests;

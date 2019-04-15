@@ -30,10 +30,10 @@
 
     <div class="buttons mx-auto">
         <div *ngIf="(user | async).viewType === viewType.Cinema">
-            <button *ngIf="(user | async).limitedPurchaseCount > 1" type="button"
+            <button *ngIf="(user | async).purchaseCartMaxLength > 1" type="button"
                 class="btn btn-outline-primary btn-block py-3"
                 routerLink="/purchase/cinema/cart">{{ 'purchase.payment.prev' | translate }}</button>
-            <button *ngIf="(user | async).limitedPurchaseCount === 1" type="button"
+            <button *ngIf="(user | async).purchaseCartMaxLength === 1" type="button"
                 class="btn btn-outline-primary btn-block py-3"
                 routerLink="/purchase/cinema/ticket">{{ 'purchase.payment.prev' | translate }}</button>
         </div>

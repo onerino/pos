@@ -26,10 +26,10 @@ export class UpdateAll implements Action {
     public readonly type = ActionTypes.UpdateAll;
     constructor(public payload: {
         seller: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
-        pos: any;
+        pos: factory.seller.IPOS;
         customerContact: factory.transaction.placeOrder.ICustomerContact;
         printer: IPrinter;
-        limitedPurchaseCount: number;
+        purchaseCartMaxLength: number;
         viewType: ViewType;
     }) { }
 }

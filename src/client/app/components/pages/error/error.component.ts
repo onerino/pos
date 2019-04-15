@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { Delete } from '../../../store/actions/purchase.action';
+import { purchaseAction } from '../../../store/actions';
 import * as reducers from '../../../store/reducers';
 
 @Component({
@@ -17,7 +17,7 @@ export class ErrorComponent implements OnInit {
 
     public ngOnInit() {
         this.error = this.store.pipe(select(reducers.getError));
-        this.store.dispatch(new Delete());
+        this.store.dispatch(new purchaseAction.Delete());
     }
 
 }

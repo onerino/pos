@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 import { getTicketPrice, IEventOrder, orderToEventOrders } from '../../../../functions';
 import { UtilService } from '../../../../services';
-import { ActionTypes, Print } from '../../../../store/actions/order.action';
+import { orderAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -26,6 +27,7 @@ export class InquiryConfirmComponent implements OnInit {
     public getTicketPrice = getTicketPrice;
     public eventOrders: IEventOrder[];
     public orderStatus: typeof factory.orderStatus = factory.orderStatus;
+    public environment = environment;
 
     constructor(
         private store: Store<reducers.IState>,
@@ -63,17 +65,17 @@ export class InquiryConfirmComponent implements OnInit {
                 const orders = [inquiry.order];
                 const pos = user.pos;
                 const printer = user.printer;
-                this.store.dispatch(new Print({ orders, pos, printer }));
+                this.store.dispatch(new orderAction.Print({ orders, pos, printer }));
             }).unsubscribe();
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.PrintSuccess),
+            ofType(orderAction.ActionTypes.PrintSuccess),
             tap(() => { })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.PrintFail),
+            ofType(orderAction.ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
                     this.util.openAlert({

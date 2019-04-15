@@ -10,7 +10,7 @@ import { take, tap } from 'rxjs/operators';
 import { getAmount } from '../../../../../functions';
 import { IReservationTicket, Reservation } from '../../../../../models/purchase/reservation';
 import { UtilService } from '../../../../../services';
-import { ActionTypes, SelectTickets, TemporaryReservation } from '../../../../../store/actions/purchase.action';
+import { purchaseAction } from '../../../../../store/actions';
 import * as reducers from '../../../../../store/reducers';
 import { MvtkCheckModalComponent, PurchaseCinemaTicketModalComponent } from '../../../../parts';
 
@@ -55,7 +55,7 @@ export class PurchaseCinemaTicketComponent implements OnInit {
             if (unselectedReservations.length > 0) {
                 this.util.openAlert({
                     title: this.translate.instant('common.error'),
-                    body: this.translate.instant('purchase.ticket.alert.unselected')
+                    body: this.translate.instant('purchase.cinema.ticket.alert.unselected')
                 });
                 return;
             }
@@ -79,11 +79,11 @@ export class PurchaseCinemaTicketComponent implements OnInit {
             if (validResult.length > 0) {
                 this.util.openAlert({
                     title: this.translate.instant('common.error'),
-                    body: this.translate.instant('purchase.ticket.alert.ticketCondition')
+                    body: this.translate.instant('purchase.cinema.ticket.alert.ticketCondition')
                 });
                 return;
             }
-            this.store.dispatch(new TemporaryReservation({
+            this.store.dispatch(new purchaseAction.TemporaryReservation({
                 transaction,
                 screeningEvent,
                 reservations,
@@ -92,7 +92,7 @@ export class PurchaseCinemaTicketComponent implements OnInit {
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.TemporaryReservationSuccess),
+            ofType(purchaseAction.ActionTypes.TemporaryReservationSuccess),
             tap(() => {
                 this.purchase.subscribe((purchase) => {
                     this.user.subscribe((user) => {
@@ -101,7 +101,7 @@ export class PurchaseCinemaTicketComponent implements OnInit {
                             this.router.navigate(['/error']);
                             return;
                         }
-                        if (user.limitedPurchaseCount === 1) {
+                        if (user.purchaseCartMaxLength === 1) {
                             const amount = getAmount(purchase.authorizeSeatReservations);
                             if (amount > 0) {
                                 this.router.navigate(['/purchase/payment']);
@@ -117,7 +117,7 @@ export class PurchaseCinemaTicketComponent implements OnInit {
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.TemporaryReservationFail),
+            ofType(purchaseAction.ActionTypes.TemporaryReservationFail),
             tap(() => {
                 this.router.navigate(['/error']);
             })
@@ -136,8 +136,13 @@ export class PurchaseCinemaTicketComponent implements OnInit {
             modalRef.componentInstance.pendingMovieTickets = purchase.pendingMovieTickets;
 
             modalRef.result.then((ticket: IReservationTicket) => {
+                if (reservation === undefined) {
+                    purchase.reservations.forEach(r => r.ticket = ticket);
+                    this.store.dispatch(new purchaseAction.SelectTickets({ reservations: purchase.reservations }));
+                    return;
+                }
                 reservation.ticket = ticket;
-                this.store.dispatch(new SelectTickets({ reservations: [reservation] }));
+                this.store.dispatch(new purchaseAction.SelectTickets({ reservations: [reservation] }));
             }).catch(() => { });
         }).unsubscribe();
     }

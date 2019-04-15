@@ -20,8 +20,12 @@
                     "endSale": "販売終了",
                     "outsideSalesPeriod": "販売期間外"
                 },
+                "infiniteStock": "在庫管理なし",
                 "next": "次へ",
-                "prev": ""
+                "prev": "",
+                "alert": {
+                    "ticketedSeat": "劇場表示では座席管理なしのパフォーマンスを選択できません。"
+                }
             },
             "seat": {
                 "title": "座席選択",
@@ -29,6 +33,8 @@
                 "next": "利用規約に同意して次へ",
                 "terms": "利用規約",
                 "prev": "戻る",
+                "allSelect": "すべて選択",
+                "reset": "リセット",
                 "alert": {
                     "unselected": "座席が未選択です。"
                 }
@@ -40,6 +46,7 @@
                 "mvtk": "ムビチケ券を利用される方",
                 "next": "次へ",
                 "prev": "戻る",
+                "allSelect": "すべて選択",
                 "alert": {
                     "unselected": "券種が未選択です。",
                     "ticketCondition": "割引券の適用条件を再度ご確認ください。"
@@ -75,6 +82,7 @@
                     "endSale": "販売終了",
                     "outsideSalesPeriod": "販売期間外"
                 },
+                "infiniteStock": "在庫管理なし",
                 "next": "次へ",
                 "prev": ""
             },
@@ -89,7 +97,8 @@
                 "alert": {
                     "unselected": "券種が未選択です。",
                     "ticketCondition": "割引券の適用条件を再度ご確認ください。",
-                    "temporaryReservation": "仮予約に失敗しました。"
+                    "temporaryReservation": "仮予約に失敗しました。",
+                    "limit": "同時購入可能数は{{value}}件までです。"
                 }
                 
             },
@@ -228,6 +237,7 @@
             "next": "",
             "prev": "戻る",
             "notfound": "スケジュールがありません。",
+            "infiniteStock": "在庫管理なし",
             "status": {
                 "opening": "開場中",
                 "nowShowing": "上映中",
@@ -289,9 +299,9 @@
         "prev": "戻る"
     },
     "setting": {
-        "title": "購入者情報入力",
-        "read": "購入者情報を入力してください。",
-        "next": "設定する",
+        "title": "設定",
+        "read": "設定を変更できます。",
+        "next": "設定を変更",
         "prev": "戻る",
         "unselected": "選択してください",
         "pos": "POS",
@@ -299,7 +309,7 @@
         "printerIpAddress": "プリンターIPアドレス",
         "printerIpAddressDescription": "※スター精密 Bluetooth接続(StarwebPRNT専用ブラウザー)の場合localhost:8001を設定してください。",
         "testPrinting": "テスト印刷",
-        "limitedPurchaseCount": "注文に対する予約上限数",
+        "purchaseCartMaxLength": "注文に対する予約上限数",
         "viewType": "表示",
         "alert": {
             "customer": "購入者情報に誤りがあります。",
@@ -307,6 +317,14 @@
             "validation": "入力情報に誤りがあります。",
             "success": "設定を保存しました。",
             "print": "印刷に失敗しました"
+        }
+    },
+    "development": {
+        "screen": {
+            "title": "座席表確認",
+            "read": "座席表を確認できます。",
+            "next": "更新",
+            "prev": "戻る"
         }
     },
     "form": {
@@ -332,7 +350,8 @@
         "confirm": {
             "login": "ログインしてよろしいですか。",
             "logout": "ログアウトしてよろしいですか。"
-        }
+        },
+        "development": "開発"
     },
     "modal": {
         "mvtkCheck": {
@@ -371,6 +390,42 @@
             "next": "追加して進む",
             "prev": "カートへ移動"
         }
+    },
+    "process": {
+        "authAction": {
+            "CheckLogin": "ログインを確認しています",
+            "Logout": "ログアウトしています"
+        },
+        "admissionAction": {
+            "Check": "QRコードを確認しています"
+        },
+        "masterAction": {
+            "GetSellers": "劇場情報を取得しています",
+            "GetSchedule": "スケジュールを取得しています"
+        },
+        "orderAction": {
+            "Search": "注文情報を取得しています",
+            "Cancel": "注文情報をキャンセルしています",
+            "Print": "印刷しています",
+            "Inquiry": "注文情報を照会しています",
+            "OrderAuthorize": "注文情報を承認しています"
+        },
+        "purchaseAction": {
+            "StartTransaction": "取引を開始しています",
+            "GetScreen": "スクリーン情報を取得しています",
+            "GetTicketList": "券種情報を取得しています",
+            "TemporaryReservation": "仮予約しています",
+            "TemporaryReservationFreeSeat": "仮予約しています",
+            "CancelTemporaryReservations": "仮予約をキャンセルしています",
+            "RegisterContact": "購入者情報を登録しています",
+            "AuthorizeCreditCard": "クレジットカード情報を承認しています",
+            "CreateGmoTokenObject": "GMOオブジェクトを作成しています",
+            "AuthorizeMovieTicket": "ムビチケ情報を承認しています",
+            "CheckMovieTicket": "ムビチケ情報を確認しています",
+            "Reserve": "取引を確定しています",
+            "AuthorizeAnyPayment": "決済情報を承認しています"
+        },
+        "userAction": {}
     },
     "common": {
         "date": {

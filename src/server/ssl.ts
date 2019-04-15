@@ -9,14 +9,14 @@ import * as app from './app/app';
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '443');
+const port = normalizePort((process.env.PORT === undefined || process.env.PORT === '') ? '443' : process.env.PORT);
 // tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('port', port);
 
-const privateKey  = fs.readFileSync('./ssl/server.key', 'utf8');
+const privateKey = fs.readFileSync('./ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('./ssl/server.crt', 'utf8');
 
-const credentials = {key: privateKey, cert: certificate};
+const credentials = { key: privateKey, cert: certificate };
 
 /**
  * Create HTTPS server.

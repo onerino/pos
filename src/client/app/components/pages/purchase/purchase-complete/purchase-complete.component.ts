@@ -8,7 +8,7 @@ import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { getTicketPrice, IEventOrder, orderToEventOrders } from '../../../../functions';
 import { UtilService } from '../../../../services';
-import { ActionTypes, Print } from '../../../../store/actions/order.action';
+import { orderAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -62,17 +62,17 @@ export class PurchaseCompleteComponent implements OnInit {
                 const orders = [purchase.order];
                 const pos = user.pos;
                 const printer = user.printer;
-                this.store.dispatch(new Print({ orders, pos, printer }));
+                this.store.dispatch(new orderAction.Print({ orders, pos, printer }));
             }).unsubscribe();
         }).unsubscribe();
 
         const success = this.actions.pipe(
-            ofType(ActionTypes.PrintSuccess),
+            ofType(orderAction.ActionTypes.PrintSuccess),
             tap(() => { })
         );
 
         const fail = this.actions.pipe(
-            ofType(ActionTypes.PrintFail),
+            ofType(orderAction.ActionTypes.PrintFail),
             tap(() => {
                 this.error.subscribe((error) => {
                     this.util.openAlert({

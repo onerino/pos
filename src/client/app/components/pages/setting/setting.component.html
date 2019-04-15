@@ -8,15 +8,15 @@
                     <div class="row">
                         <p class="col-md-4 py-2 text-md-right">{{ 'common.theater' | translate }}</p>
                         <div class="col-md-8">
-                            <select class="form-control" formControlName="theaterCode" (change)="changePosList()">
+                            <select class="form-control" formControlName="sellerBranchCode" (change)="changePosList()">
                                 <option value="">{{ 'setting.unselected' | translate }}</option>
                                 <option *ngFor="let theater of (master | async).sellers"
                                     [value]="theater.location.branchCode">{{
                                     theater.name.ja }}</option>
                             </select>
-                            <div *ngIf="settingForm.controls.theaterCode.invalid && settingForm.controls.theaterCode.touched"
+                            <div *ngIf="settingForm.controls.sellerBranchCode.invalid && settingForm.controls.sellerBranchCode.touched"
                                 class="mt-2">
-                                <p *ngIf="settingForm.controls.theaterCode.errors.required" class="text-danger">
+                                <p *ngIf="settingForm.controls.sellerBranchCode.errors.required" class="text-danger">
                                     {{ 'form.validation.unselected' | translate }}</p>
                             </div>
                         </div>
@@ -151,13 +151,13 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <p class="col-md-4 py-2 text-md-right">{{ 'setting.limitedPurchaseCount' | translate }}</p>
+                        <p class="col-md-4 py-2 text-md-right">{{ 'setting.purchaseCartMaxLength' | translate }}</p>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" formControlName="limitedPurchaseCount"
+                            <input type="text" class="form-control" formControlName="purchaseCartMaxLength"
                                 placeholder="1">
-                            <div *ngIf="settingForm.controls.limitedPurchaseCount.invalid && settingForm.controls.limitedPurchaseCount.touched"
+                            <div *ngIf="settingForm.controls.purchaseCartMaxLength.invalid && settingForm.controls.purchaseCartMaxLength.touched"
                                 class="mt-2">
-                                <p *ngIf="settingForm.controls.limitedPurchaseCount.errors.required" class="text-danger">
+                                <p *ngIf="settingForm.controls.purchaseCartMaxLength.errors.required" class="text-danger">
                                     {{ 'form.validation.required' | translate }}</p>
                             </div>
                         </div>
@@ -168,8 +168,8 @@
                         <p class="col-md-4 py-2 text-md-right">{{ 'setting.viewType' | translate }}</p>
                         <div class="col-md-8">
                             <select class="form-control" id="viewType" formControlName="viewType">
-                                <option [value]="ViewType.Cinema">{{ ViewType.Cinema }}</option>
-                                <option [value]="ViewType.Event">{{ ViewType.Event }}</option>
+                                <option [value]="viewType.Cinema">{{ viewType.Cinema }}</option>
+                                <option [value]="viewType.Event">{{ viewType.Event }}</option>
                             </select>
                             <div *ngIf="settingForm.controls.viewType.invalid && settingForm.controls.viewType.touched"
                                 class="mt-2">
@@ -187,7 +187,7 @@
         <button type="button" class="btn btn-primary btn-block py-3"
             (click)="onSubmit()">{{ 'setting.next' | translate }}</button>
         <button type="button" class="btn btn-outline-primary btn-block py-3"
-            routerLink="/purchase/root">{{ 'setting.prev' | translate }}</button>
+            [routerLink]="environment.BASE_URL">{{ 'setting.prev' | translate }}</button>
     </div>
 
 </div>

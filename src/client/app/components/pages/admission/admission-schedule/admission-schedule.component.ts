@@ -8,8 +8,7 @@ import { SwiperComponent, SwiperConfigInterface, SwiperDirective } from 'ngx-swi
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { IScreeningEventWork, screeningEventsToWorkEvents } from '../../../../functions';
-import * as admissionAction from '../../../../store/actions/admission.action';
-import * as masterAction from '../../../../store/actions/master.action';
+import { admissionAction, masterAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 
@@ -93,7 +92,14 @@ import * as reducers from '../../../../store/reducers';
                 return;
             }
             this.store.dispatch(new admissionAction.SelectScheduleDate({ scheduleDate }));
-            this.store.dispatch(new masterAction.GetSchedule({ seller, scheduleDate }));
+            this.store.dispatch(new masterAction.GetSchedule({
+                superEvent: {
+                    locationBranchCodes:
+                        (seller.location === undefined || seller.location.branchCode === undefined) ? [] : [seller.location.branchCode]
+                },
+                startFrom: moment(scheduleDate).toDate(),
+                startThrough: moment(scheduleDate).add(1, 'day').toDate()
+            }));
         }).unsubscribe();
 
         const success = this.actions.pipe(

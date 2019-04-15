@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { UtilService } from '../../../../services';
-import * as admissionAction from '../../../../store/actions/admission.action';
+import { admissionAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 
 @Component({
@@ -43,7 +43,6 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
         this.video.width = window.innerWidth;
         this.isLoading = this.store.pipe(select(reducers.getLoading));
         this.admission = this.store.pipe(select(reducers.getAdmission));
-        // this.getScreeningEventReservations();
         this.store.dispatch(new admissionAction.InitializeQrcodeToken());
     }
 

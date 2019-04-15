@@ -11,8 +11,7 @@ import { take, tap } from 'rxjs/operators';
 import { getAmount, getTicketPrice, IScreeningEventWork, screeningEventsToWorkEvents } from '../../../../../functions';
 import { IReservationTicket } from '../../../../../models';
 import { UtilService } from '../../../../../services';
-import * as masterAction from '../../../../../store/actions/master.action';
-import * as purchaseAction from '../../../../../store/actions/purchase.action';
+import { masterAction, purchaseAction } from '../../../../../store/actions';
 import * as reducers from '../../../../../store/reducers';
 import { PurchaseEventTicketModalComponent } from '../../../../parts';
 
@@ -76,7 +75,14 @@ export class PurchaseEventTicketComponent implements OnInit, OnDestroy {
                     this.router.navigate(['/error']);
                     return;
                 }
-                this.store.dispatch(new masterAction.GetSchedule({ seller, scheduleDate }));
+                this.store.dispatch(new masterAction.GetSchedule({
+                    superEvent: {
+                        locationBranchCodes:
+                            (seller.location === undefined || seller.location.branchCode === undefined) ? [] : [seller.location.branchCode]
+                    },
+                    startFrom: moment(scheduleDate).toDate(),
+                    startThrough: moment(scheduleDate).add(1, 'day').toDate()
+                }));
             }).unsubscribe();
         }).unsubscribe();
 
@@ -101,8 +107,19 @@ export class PurchaseEventTicketComponent implements OnInit, OnDestroy {
     }
 
     public selectSchedule(screeningEvent: factory.event.screeningEvent.IEvent) {
-        this.store.dispatch(new purchaseAction.SelectSchedule({ screeningEvent }));
-        this.getTickets();
+        this.user.subscribe((user) => {
+            this.purchase.subscribe((purchase) => {
+                if (purchase.authorizeSeatReservations.length >= user.purchaseCartMaxLength) {
+                    this.util.openAlert({
+                        title: this.translate.instant('common.error'),
+                        body: this.translate.instant('purchase.event.ticket.alert.limit', { value: user.purchaseCartMaxLength })
+                    });
+                    return;
+                }
+                this.store.dispatch(new purchaseAction.SelectSchedule({ screeningEvent }));
+                this.getTickets();
+            }).unsubscribe();
+        }).unsubscribe();
     }
 
     /**

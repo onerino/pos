@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Delete } from '../../../store/actions/purchase.action';
+import { purchaseAction } from '../../../store/actions';
 import * as reducers from '../../../store/reducers';
 
 @Component({
@@ -15,7 +15,7 @@ export class ExpiredComponent implements OnInit {
     ) { }
 
     public ngOnInit() {
-        this.store.dispatch(new Delete());
+        this.store.dispatch(new purchaseAction.Delete());
     }
 
 }

@@ -14,6 +14,7 @@ import {
 } from './components/pages';
 import * as admission from './routes/admission.route';
 import * as auth from './routes/auth.route';
+import * as development from './routes/development.route';
 import * as inquiry from './routes/inquiry.route';
 import * as order from './routes/order.route';
 import * as purchase from './routes/purchase.route';
@@ -26,6 +27,7 @@ const appRoutes: Routes = [
     inquiry.route,
     admission.route,
     order.route,
+    development.route,
     {
         path: '',
         component: BaseComponent,
