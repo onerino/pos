@@ -7,7 +7,7 @@
         <li *ngIf="isVisible('order')" class="p-3 border-bottom pointer" routerLink="/order/list" (click)="close.emit()"><i class="far fa-list-alt mr-2"></i>{{ 'menu.orderSearch' | translate }}</li>
         <li *ngIf="isVisible('admission')" class="p-3 border-bottom pointer" routerLink="/admission/schedule" (click)="close.emit()"><i class="far fa-check-circle mr-2"></i>{{ 'menu.admission' | translate }}</li>
         <li *ngIf="isVisible('setting')" class="p-3 border-bottom pointer" routerLink="/setting" (click)="close.emit()"><i class="fas fa-cog mr-2"></i>{{ 'menu.settings' | translate }}</li>
-        <li *ngIf="isVisible('setting')" class="p-3 border-bottom pointer" routerLink="/development/screen" (click)="close.emit()"><i class="fas fa-flask mr-2"></i>{{ 'menu.development' | translate }}</li>
+        <li *ngIf="isVisible('setting')" class="p-3 border-bottom pointer" routerLink="/development" (click)="close.emit()"><i class="fas fa-flask mr-2"></i>{{ 'menu.development' | translate }}</li>
         <li *ngIf="isVisible('auth')" class="p-3 border-bottom pointer" (click)="signOut()"><i class="fas fa-sign-out-alt mr-2"></i>{{ 'menu.logout' | translate }}</li>
     </ul>
 </div>

@@ -28,17 +28,17 @@
             </button> -->
     </div>
 
-    <div class="buttons mx-auto">
+    <div class="buttons mx-auto text-center">
         <div *ngIf="(user | async).viewType === viewType.Cinema">
             <button *ngIf="(user | async).purchaseCartMaxLength > 1" type="button"
-                class="btn btn-outline-primary btn-block py-3"
+                class="btn btn-link"
                 routerLink="/purchase/cinema/cart">{{ 'purchase.payment.prev' | translate }}</button>
             <button *ngIf="(user | async).purchaseCartMaxLength === 1" type="button"
-                class="btn btn-outline-primary btn-block py-3"
+                class="btn btn-link"
                 routerLink="/purchase/cinema/ticket">{{ 'purchase.payment.prev' | translate }}</button>
         </div>
         <div *ngIf="(user | async).viewType === viewType.Event">
-            <button type="button" class="btn btn-outline-primary btn-block py-3"
+            <button type="button" class="btn btn-link"
                 routerLink="/purchase/event/ticket">{{ 'purchase.payment.prev' | translate }}</button>
         </div>
 

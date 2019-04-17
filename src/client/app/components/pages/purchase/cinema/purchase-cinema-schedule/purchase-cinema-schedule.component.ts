@@ -104,7 +104,7 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
                 }
                 this.store.dispatch(new purchaseAction.StartTransaction({
                     params: {
-                        expires: moment().add(environment.TRANSACTION_TIME, 'minutes').toDate(),
+                        expires: moment().add(environment.PURCHASE_TRANSACTION_TIME, 'minutes').toDate(),
                         seller: { typeOf: user.seller.typeOf, id: user.seller.id },
                         object: {}
                     }

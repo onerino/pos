@@ -1,4 +1,4 @@
-<div class="bg-light-gray">
+<div class="bg-white">
     <div class="p-3">
         <div class="mb-2">
             <p><strong>{{ screeningWorkEvent.info.name | changeLanguage }}</strong></p>
@@ -28,7 +28,7 @@
             class="border boder-gray rounded p-2 py-md-3 text-md-center d-md-block d-flex justify-content-between align-items-center pointer"
             [ngClass]="{ 
           'bg-white': (moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix()), 
-          'bg-gray text-light-gray': !(moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix())
+          'bg-dark-gray text-light-gray': !(moment(screeningEvent.doorTime).unix() < moment().unix() && moment(screeningEvent.endDate).unix() > moment().unix())
           }" (click)="select.emit(screeningEvent)">
             <div>
                 <div class="mb-2 text-small">

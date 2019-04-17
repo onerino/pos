@@ -320,11 +320,33 @@
         }
     },
     "development": {
+        "index": {
+            "title": "開発",
+            "read": "機能を確認できます。",
+            "screen": "座席表確認",
+            "encryption": "暗号化確認",
+            "next": "",
+            "prev": "戻る"
+        },
         "screen": {
             "title": "座席表確認",
             "read": "座席表を確認できます。",
             "next": "更新",
             "prev": "戻る"
+        },
+        "encryption": {
+            "title": "暗号化確認",
+            "read": "暗号化、復号化の確認ができます。",
+            "next": "更新",
+            "prev": "戻る",
+            "encodeText": "暗号化する文字列",
+            "encode": "暗号化",
+            "encrypted": "暗号化文字列",
+            "qrcode": "QRコード(salt,iv,encrypted)",
+            "iv": "IV(初期化ベクトル)",
+            "salt": "salt",
+            "decode": "復号化",
+            "decrypted": "復号化文字列"
         }
     },
     "form": {
@@ -475,6 +497,8 @@
         "error": "エラー",
         "confirm": "確認",
         "complete": "完了",
-        "warning": "警告"
+        "warning": "警告",
+        "change": "変更",
+        "remove": "削除"
     }
 }

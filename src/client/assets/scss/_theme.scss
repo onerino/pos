@@ -2,13 +2,13 @@
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
 
-$body-bg: #000;
-$body-color: #FFF;
+$font-family: -apple-system, "Lucida Grande", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "游ゴシック", "メイリオ", Meiryo, Helvetica, Arial, sans-serif;
+
 $theme-colors: (
-    primary: #684b26, 
-    secondary: #c59e77, 
+    primary: #670000, 
+    secondary: #b07b7b, 
     success: #0081CC, 
-    info: #dc0b0b, 
+    info: #dc700b, 
     warning: $yellow, 
     danger: $red, 
     light: $gray-100, 
@@ -16,5 +16,9 @@ $theme-colors: (
 );
 
 $dark-gray: #666;
-$gray: #AAA;
-$light-gray: #f6f7fb;
+$gray: #ced4da;
+$light-gray: #EEE;
+
+$body-bg: $light-gray;
+$body-color: #333;
+$body-font-size: 14px;

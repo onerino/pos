@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { map, mergeMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { createPrintCanvas, createTestPrintCanvas, formatTelephone, retry, sleep } from '../../functions';
-import { connectionType, ITicketPrintData } from '../../models';
+import { connectionType, ITicketPrintData, PrintQrCodeType } from '../../models';
 import { CinerinoService, StarPrintService, UtilService } from '../../services';
 import { orderAction } from '../actions';
 
@@ -169,8 +169,31 @@ export class OrderEffects {
                     canvasList.push(canvas);
                 } else {
                     for (const authorizeOrder of authorizeOrders) {
-                        for (let i = 0; i < authorizeOrder.acceptedOffers.length; i++) {
-                            const canvas = await createPrintCanvas({ printData, order: authorizeOrder, offerIndex: i, pos });
+                        for (const acceptedOffer of authorizeOrder.acceptedOffers) {
+                            const itemOffered = acceptedOffer.itemOffered;
+                            if (itemOffered.typeOf !== factory.chevre.reservationType.EventReservation) {
+                                continue;
+                            }
+                            const order = authorizeOrder;
+                            let qrcode = itemOffered.reservedTicket.ticketToken;
+                            if (environment.PRINT_QR_CODE_FILTER_SUPER_EVENT_ID.length > 0) {
+                                // PRINT_QR_CODE_FILTER_SUPER_EVENT_IDによるフィルタリング
+                                const findResult = environment.PRINT_QR_CODE_FILTER_SUPER_EVENT_ID.find((id) => {
+                                    return (id === itemOffered.reservationFor.superEvent.id);
+                                });
+                                if (findResult === undefined) {
+                                    qrcode = undefined;
+                                }
+                            }
+                            if (qrcode !== undefined
+                                && environment.PRINT_QR_CODE_TYPE === PrintQrCodeType.encryption) {
+                                // QRコード暗号化(id + startDate)
+                                const encyptText = `${itemOffered.reservationFor.id}=${itemOffered.reservationFor.startDate}`;
+                                const encryptionEncodeResult = await this.util.encryptionEncode(encyptText);
+                                qrcode =
+                                    `${encryptionEncodeResult.salt},${encryptionEncodeResult.iv},${encryptionEncodeResult.encrypted}`;
+                            }
+                            const canvas = await createPrintCanvas({ printData, order, acceptedOffer, pos, qrcode });
                             canvasList.push(canvas);
                         }
                     }

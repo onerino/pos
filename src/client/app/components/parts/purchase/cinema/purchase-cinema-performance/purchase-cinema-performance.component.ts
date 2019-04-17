@@ -4,18 +4,20 @@ import * as moment from 'moment';
 import { IScreeningEventWork, isScheduleStatusThreshold } from '../../../../../functions';
 
 @Component({
-    selector: 'app-purchase-cinema-schedule-work',
-    templateUrl: './purchase-cinema-schedule-work.component.html',
-    styleUrls: ['./purchase-cinema-schedule-work.component.scss']
+    selector: 'app-purchase-cinema-performance',
+    templateUrl: './purchase-cinema-performance.component.html',
+    styleUrls: ['./purchase-cinema-performance.component.scss']
 })
-export class PurchaseCinemaScheduleWorkComponent implements OnInit {
+export class PurchaseCinemaPerformanceComponent implements OnInit {
 
     @Input() public screeningWorkEvent: IScreeningEventWork;
     @Output() public select = new EventEmitter<factory.chevre.event.screeningEvent.IEvent>();
     public moment: typeof moment = moment;
     public isScheduleStatusThreshold = isScheduleStatusThreshold;
+
     constructor() { }
 
-    public ngOnInit() { }
+    public ngOnInit() {
+    }
 
 }

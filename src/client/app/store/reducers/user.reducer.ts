@@ -17,7 +17,7 @@ export interface IUserState {
 export const userInitialState: IUserState = {
     language: 'ja',
     purchaseCartMaxLength: Number(environment.PURCHASE_CART_MAX_LENGTH),
-    viewType: environment.VIEW_TYPE
+    viewType: (<ViewType>environment.VIEW_TYPE)
 };
 
 /**

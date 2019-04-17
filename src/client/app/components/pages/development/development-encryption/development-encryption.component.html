@@ -1,0 +1,106 @@
+<div class="contents-width mx-auto px-3 py-5">
+    <h2 class="text-large mb-4 text-center font-weight-bold">{{ 'development.encryption.title' | translate }}</h2>
+    <p class="mb-4">{{ 'development.encryption.read' | translate }}</p>
+
+
+    <div class="p-3 bg-white mb-4">
+        <form>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.encodeText' | translate }}</p>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="encodeText" [(ngModel)]="encodeText"
+                            placeholder="">
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="encodeResult" class="">
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.salt' | translate }}</p>
+                        <div class="col-md-8"><code
+                                class="p-2 bg-white border border-gray d-block rounded">{{ encodeResult.salt }}</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.iv' | translate }}</p>
+                        <div class="col-md-8"><code
+                                class="p-2 bg-white border border-gray d-block rounded">{{ encodeResult.iv }}</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.encrypted' | translate }}</p>
+                        <div class="col-md-8"><code
+                                class="p-2 bg-white border border-gray d-block rounded">{{ encodeResult.encrypted }}</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.qrcode' | translate }}</p>
+                        <div class="col-md-8 text-md-center"><img [src]="qrcode"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons mx-auto text-center">
+                <button type="button" class="btn btn-primary btn-block py-3"
+                    (click)="encode()">{{ 'development.encryption.encode' | translate }}</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="p-3 bg-white mb-4">
+        <form>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.salt' | translate }}</p>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="salt" [(ngModel)]="salt" placeholder="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.iv' | translate }}</p>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="iv" [(ngModel)]="iv" placeholder="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row align-items-center">
+                    <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.encrypted' | translate }}</p>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="encrypted" [(ngModel)]="encrypted" placeholder="">
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="decodeResult" class="">
+                <div class="form-group">
+                    <div class="row align-items-center">
+                        <p class="col-md-4 py-2 text-md-right">{{ 'development.encryption.decrypted' | translate }}</p>
+                        <div class="col-md-8"><code
+                                class="p-2 bg-white border border-gray d-block rounded">{{ decodeResult.decrypted }}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons mx-auto text-center">
+                <button type="button" class="btn btn-primary btn-block py-3"
+                    (click)="decode()">{{ 'development.encryption.decode' | translate }}</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="buttons mx-auto text-center">
+        <button type="button" class="btn btn-link"
+            routerLink="/development">{{ 'development.encryption.prev' | translate }}</button>
+    </div>
+
+</div>

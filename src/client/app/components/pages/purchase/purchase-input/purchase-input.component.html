@@ -145,12 +145,12 @@
     </div>
 
 
-    <div class="buttons mx-auto">
+    <div class="buttons mx-auto text-center">
         <button type="button" class="btn btn-primary btn-block py-3 mb-3" [disabled]="isLoading | async"
             (click)="onSubmit()">{{ 'purchase.input.next' | translate }}</button>
-        <button type="button" class="btn btn-outline-primary btn-block py-3"
+        <button type="button" class="btn btn-link"
             routerLink="/purchase/cinema/cart">{{ 'purchase.input.prev' | translate }}</button>
-        <!-- <button type="button" class="btn btn-outline-primary btn-block py-3" routerLink="/purchase/cinema/ticket">券種選択へ戻る</button> -->
+        <!-- <button type="button" class="btn btn-link" routerLink="/purchase/cinema/ticket">券種選択へ戻る</button> -->
     </div>
 
 </div>
