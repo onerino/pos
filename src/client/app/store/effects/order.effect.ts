@@ -30,9 +30,9 @@ export class OrderEffects {
         ofType<orderAction.Search>(orderAction.ActionTypes.Search),
         map(action => action.payload),
         mergeMap(async (payload) => {
-            await this.cinerino.getServices();
-            const params = payload.params;
             try {
+                await this.cinerino.getServices();
+                const params = payload.params;
                 // if (params.customer !== undefined
                 //     && params.customer.telephone !== undefined) {
                 //     params.customer.telephone = formatTelephone(params.customer.telephone)
@@ -112,7 +112,7 @@ export class OrderEffects {
         map(action => action.payload),
         mergeMap(async (payload) => {
             await this.cinerino.getServices();
-            const confirmationNumber = payload.confirmationNumber;
+            const confirmationNumber = Number(payload.confirmationNumber);
             const customer = {
                 telephone: (payload.customer.telephone === undefined)
                     ? '' : formatTelephone(payload.customer.telephone)

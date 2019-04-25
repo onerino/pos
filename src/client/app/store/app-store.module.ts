@@ -6,6 +6,7 @@ import {
     MasterEffects,
     OrderEffects,
     PurchaseEffects,
+    ReservationEffects,
     UserEffects
 } from './effects';
 import { reducer } from './reducers';
@@ -18,6 +19,7 @@ import { reducer } from './reducers';
             PurchaseEffects,
             UserEffects,
             MasterEffects,
+            ReservationEffects,
             OrderEffects
         ])
     ]

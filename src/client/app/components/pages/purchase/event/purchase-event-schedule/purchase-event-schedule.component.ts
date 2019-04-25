@@ -29,8 +29,12 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store<reducers.IState>,
         private actions: Actions,
-        private router: Router) { }
+        private router: Router
+    ) { }
 
+    /**
+     * 初期化
+     */
     public async ngOnInit() {
         this.purchase = this.store.pipe(select(reducers.getPurchase));
         this.user = this.store.pipe(select(reducers.getUser));
@@ -38,15 +42,23 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
         this.error = this.store.pipe(select(reducers.getError));
         this.screeningWorkEvents = [];
         if (this.scheduleDate === undefined || this.scheduleDate === '') {
-            this.scheduleDate = moment().format('YYYY-MM-DD');
+            this.scheduleDate = moment()
+                .add(environment.PURCHASE_SCHEDULE_DEFAULT_SELECTED_DATE, 'day')
+                .format('YYYY-MM-DD');
         }
         this.selectDate();
     }
 
+    /**
+     * 破棄
+     */
     public ngOnDestroy() {
         clearTimeout(this.updateTimer);
     }
 
+    /**
+     * 更新
+     */
     private update() {
         if (this.updateTimer !== undefined) {
             clearTimeout(this.updateTimer);
@@ -58,7 +70,7 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * selectDate
+     * 日付選択
      */
     public selectDate() {
         this.user.subscribe((user) => {
@@ -66,6 +78,11 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
             if (seller === undefined) {
                 this.router.navigate(['/error']);
                 return;
+            }
+            if (this.scheduleDate === '') {
+                this.scheduleDate = moment()
+                    .add(environment.PURCHASE_SCHEDULE_DEFAULT_SELECTED_DATE, 'day')
+                    .format('YYYY-MM-DD');
             }
             const scheduleDate = this.scheduleDate;
             this.store.dispatch(new purchaseAction.SelectScheduleDate({ scheduleDate }));

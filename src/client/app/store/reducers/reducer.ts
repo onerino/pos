@@ -1,10 +1,18 @@
 import { environment } from '../../../environments/environment';
 import { Reservation } from '../../models';
-import { admissionAction, masterAction, orderAction, purchaseAction, userAction } from '../actions';
+import {
+    admissionAction,
+    masterAction,
+    orderAction,
+    purchaseAction,
+    reservationAction,
+    userAction
+} from '../actions';
 import * as admissionReducer from './admission.reducer';
 import * as masterReducer from './master.reducer';
 import * as orderReducer from './order.reducer';
 import * as purchaseReducer from './purchase.reducer';
+import * as reservationReducer from './reservation.reducer';
 import * as userReducer from './user.reducer';
 
 /**
@@ -19,6 +27,7 @@ export interface IState {
     masterData: masterReducer.IMasterState;
     admissionData: admissionReducer.IAdmissionState;
     orderData: orderReducer.IOrderState;
+    reservationData: reservationReducer.IReservationState;
 }
 
 /**
@@ -32,7 +41,8 @@ export const initialState: IState = {
     userData: userReducer.userInitialState,
     masterData: masterReducer.masterInitialState,
     admissionData: admissionReducer.admissionInitialState,
-    orderData: orderReducer.orderInitialState
+    orderData: orderReducer.orderInitialState,
+    reservationData: reservationReducer.reservationInitialState,
 };
 
 function getInitialState(): IState {
@@ -56,7 +66,8 @@ type Actions =
     | userAction.Actions
     | masterAction.Actions
     | admissionAction.Actions
-    | orderAction.Actions;
+    | orderAction.Actions
+    | reservationAction.Actions;
 
 /**
  * Reducer
@@ -77,6 +88,8 @@ export function reducer(
         return admissionReducer.reducer(state, <admissionAction.Actions>action);
     } else if (/\[Order\]/.test(action.type)) {
         return orderReducer.reducer(state, <orderAction.Actions>action);
+    } else if (/\[Reservation\]/.test(action.type)) {
+        return reservationReducer.reducer(state, <reservationAction.Actions>action);
     } else {
         return state;
     }
@@ -93,3 +106,4 @@ export const getUser = (state: IState) => state.userData;
 export const getMaster = (state: IState) => state.masterData;
 export const getAdmission = (state: IState) => state.admissionData;
 export const getOrder = (state: IState) => state.orderData;
+export const getReservation = (state: IState) => state.reservationData;

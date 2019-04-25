@@ -295,7 +295,7 @@ export class ScreenComponent implements OnInit, AfterViewInit, AfterViewChecked 
                                     status = SeatStatus.Default;
                                 }
                                 acceptedOffer = {
-                                    ticketedSeat: <factory.chevre.reservation.ISeat>{
+                                    ticketedSeat: <factory.chevre.reservation.ISeat<factory.chevre.reservationType.EventReservation>>{
                                         typeOf: findContainsPlaceResult.typeOf,
                                         seatingType: findContainsPlaceResult.seatingType,
                                         seatNumber: findContainsPlaceResult.branchCode,

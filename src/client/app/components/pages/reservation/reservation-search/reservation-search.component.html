@@ -1,0 +1,136 @@
+<div class="contents-width mx-auto px-3 py-5">
+    <h2 class="text-large mb-4 text-center font-weight-bold">{{ 'reservation.search.title' | translate }}</h2>
+    <p class="mb-4">{{ 'reservation.search.read' | translate }}</p>
+    <div class="conditions p-3 bg-white mb-4">
+        <form (submit)="reservationSearch(true)">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="reservationDateFrom"
+                        class="mb-2">{{ 'reservation.search.conditions.reservationDateFrom' | translate }}</label>
+                    <input type="date" class="form-control" name="reservationDateFrom" id="reservationDateFrom"
+                        [(ngModel)]="conditions.reservationDateFrom" placeholder="{{ moment().format('YYYY-MM-DD') }}">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="reservationDateThrough"
+                        class="mb-2">{{ 'reservation.search.conditions.reservationDateThrough' | translate }}</label>
+                    <input type="date" class="form-control" name="reservationDateThrough" id="reservationDateThrough"
+                        [(ngModel)]="conditions.reservationDateThrough"
+                        placeholder="{{ moment().format('YYYY-MM-DD') }}">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="confirmationNumber" class="mb-2">{{ 'common.reservationId' | translate }}</label>
+                    <input type="text" class="form-control" name="id" id="id" [(ngModel)]="conditions.id"
+                        placeholder="{{ 'common.reservationId' | translate }}">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="reservationNumber" class="mb-2">{{ 'common.reservationNumber' | translate }}</label>
+                    <input type="text" class="form-control" name="reservationNumber" id="reservationNumber"
+                        [(ngModel)]="conditions.reservationNumber"
+                        placeholder="{{ 'common.reservationNumber' | translate }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="reservationStatus" class="mb-2">{{ 'common.reservationStatus' | translate }}</label>
+                    <select class="form-control" name="reservationStatus" id="reservationStatus"
+                        [(ngModel)]="conditions.reservationStatus">
+                        <option value="">{{ 'common.all' | translate }}</option>
+                        <option [value]="reservationStatus.ReservationConfirmed">
+                            {{ 'reservation.search.reservationStatus.ReservationConfirmed' | translate }}</option>
+                        <option [value]="reservationStatus.ReservationHold">
+                            {{ 'reservation.search.reservationStatus.ReservationHold' | translate }}</option>
+                        <option [value]="reservationStatus.ReservationPending">
+                            {{ 'reservation.search.reservationStatus.ReservationPending' | translate }}</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="eventStartDateFrom"
+                        class="mb-2">{{ 'reservation.search.conditions.eventStartDateFrom' | translate }}</label>
+                    <input type="date" class="form-control" name="eventStartDateFrom" id="eventStartDateFrom"
+                        [(ngModel)]="conditions.eventStartDateFrom" placeholder="{{ moment().format('YYYY-MM-DD') }}">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="eventStartDateThrough"
+                        class="mb-2">{{ 'reservation.search.conditions.eventStartDateThrough' | translate }}</label>
+                    <input type="date" class="form-control" name="eventStartDateThrough" id="eventStartDateThrough"
+                        [(ngModel)]="conditions.eventStartDateThrough"
+                        placeholder="{{ moment().format('YYYY-MM-DD') }}">
+                </div>
+            </div>
+            <div class="buttons mx-auto text-center">
+                <button type="submit" class="btn btn-primary btn-block py-3"
+                    [disabled]="isLoading | async">{{ 'reservation.search.search' | translate }}</button>
+            </div>
+        </form>
+    </div>
+    <p *ngIf="(reservation | async).reservations.length === 0">{{ 'reservation.search.notfound' | translate }}</p>
+
+    <div *ngIf="(reservation | async).reservations.length > 0">
+        <div class="d-md-flex align-items-center justify-content-between mb-4">
+            <div class="text-md-right text-center mb-3 mb-md-0 reservation-2">
+                <ngb-pagination class="d-inline-block" [(page)]="confirmedConditions.page"
+                    [collectionSize]="(reservation | async).pageCount * 10" [maxSize]="3" [boundaryLinks]="false"
+                    (pageChange)="reservationSearch(false)"></ngb-pagination>
+            </div>
+        </div>
+
+        <div class="scroll-horizontal">
+            <table class="table bg-white breservation text-small mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'common.reservationId' | translate }}</th>
+                        <th scope="col">{{ 'common.reservationNumber' | translate }}</th>
+                        <th scope="col">{{ 'common.event' | translate }}</th>
+                        <th scope="col">{{ 'common.ticket' | translate }}</th>
+                        <!-- <th scope="col">決済方法</th> -->
+                        <!-- <th scope="col">注文ステータス</th> -->
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let reservation of (reservation | async).reservations let index = index"
+                        [class.bg-light-gray]="index % 2 === 0">
+
+                        <td class="align-middle">
+                            <p>{{ reservation.id }}</p>
+                        </td>
+                        <td class="align-middle">{{ reservation.reservationNumber }}</td>
+                        <td class="align-middle">
+                            <p *ngIf="(reservation.reservationFor.name | changeLanguage).length > 0">{{
+                                reservation.reservationFor.name | changeLanguage | slice:0:10 }}</p>
+                            <p *ngIf="!((reservation.reservationFor.name | changeLanguage).length > 0)">{{
+                                reservation.reservationFor.name | changeLanguage }}</p>
+                            <p>{{
+                                reservation.reservationFor.superEvent.location.name | changeLanguage }}
+                                / {{
+                                reservation.reservationFor.location.name | changeLanguage }}</p>
+                            <p>{{ reservation.reservationFor.startDate | formatDate: 'YYYY/MM/DD (ddd) HH:mm' }}
+                                -</p>
+                        </td>
+                        <td class="align-middle">
+                            <p>{{ reservation.reservedTicket.ticketType.name | changeLanguage }}</p>
+                            <p *ngIf="reservation.reservedTicket.ticketedSeat">
+                                {{ reservation.reservedTicket.ticketedSeat.seatNumber }}</p>
+                            <p>{{ getTicketPrice({ priceSpecification : { priceComponent: reservation.price.priceComponent } }).single | currency : 'JPY' }}
+                            </p>
+                        </td>
+                        <!-- <td class="align-middle">
+                          <div *ngFor="let paymentMethod of reservation.paymentMethods">
+                              <p>{{ paymentMethod.name }}</p>
+                          </div>
+                      </td> -->
+                        <!-- <td class="align-middle">
+                          {{ reservation.reservationStatus }}
+                      </td> -->
+                        <td class="align-middle">
+                            <button class="btn btn-primary mr-2" (click)="openDetail(reservation)"><i
+                                    class="fas fa-search-plus"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+</div>

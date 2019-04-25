@@ -6,11 +6,11 @@ import { admissionAction } from '../actions';
 export interface IAdmissionState {
     scheduleDate?: string;
     screeningEvent?: factory.chevre.event.screeningEvent.IEvent;
-    screeningEventReservations: factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[];
+    screeningEventReservations: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>[];
     qrcodeToken?: {
         token?: string;
         decodeResult?: IDecodeResult;
-        availableReservation?: factory.chevre.reservation.event.ISearchConditions;
+        availableReservation?: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>;
         checkTokenActions: factory.action.check.token.IAction[];
         statusCode: number;
     };

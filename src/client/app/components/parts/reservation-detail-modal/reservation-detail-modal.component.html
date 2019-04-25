@@ -1,0 +1,66 @@
+<div class="p-3 scroll-vertical text-small">
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.reservationId' | translate }}]</p>
+            <p class="col-md-8">{{ reservation.id }}</p>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.reservationNumber' | translate }}]</p>
+            <p class="col-md-8">{{ reservation.reservationNumber }}</p>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.event' | translate }}]</p>
+            <div class="col-md-8">
+                <p *ngIf="(reservation.reservationFor.name | changeLanguage).length > 0">{{
+                    reservation.reservationFor.name | changeLanguage | slice:0:10 }}</p>
+                <p *ngIf="!((reservation.reservationFor.name | changeLanguage).length > 0)">{{
+                    reservation.reservationFor.name | changeLanguage }}</p>
+                <p>{{
+                    reservation.reservationFor.superEvent.location.name | changeLanguage }}
+                    / {{
+                    reservation.reservationFor.location.name | changeLanguage }}</p>
+                <p>{{ reservation.reservationFor.startDate | formatDate: 'YYYY/MM/DD (ddd) HH:mm' }}
+                    -</p>
+            </div>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.ticket' | translate }}]</p>
+            <div class="col-md-8">
+                <p>{{ reservation.reservedTicket.ticketType.name | changeLanguage }}</p>
+                <p *ngIf="reservation.reservedTicket.ticketedSeat">
+                    {{ reservation.reservedTicket.ticketedSeat.seatNumber }}</p>
+                <p>{{ getTicketPrice({ priceSpecification : { priceComponent: reservation.price.priceComponent } }).single | currency : 'JPY' }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.reservationStatus' | translate }}]</p>
+            <p class="col-md-8">{{ reservation.reservationStatus }}</p>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.ticketing' | translate }}]</p>
+            <p class="col-md-8">{{ reservation.checkedIn }}</p>
+        </div>
+    </div>
+    <div class="py-3 border-bottom border-gray">
+        <div class="row align-items-center">
+            <p class="mb-2 mb-md-0 col-md-4">[{{ 'common.admission' | translate }}]</p>
+            <p class="col-md-8">{{ reservation.attended }}</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="buttons mx-auto text-center">
+    <button type="button" class="btn btn-link" (click)="activeModal.dismiss()">{{ 'common.close' | translate }}</button>
+</div>

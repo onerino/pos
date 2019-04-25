@@ -103,7 +103,7 @@ export class CheckSuccess implements Action {
     constructor(public payload: {
         token?: string;
         decodeResult?: IDecodeResult;
-        availableReservation?: factory.chevre.reservation.event.ISearchConditions;
+        availableReservation?: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>;
         checkTokenActions: factory.action.check.token.IAction[];
         statusCode: number;
     }) { }

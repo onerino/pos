@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { factory } from '@cinerino/api-javascript-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,6 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { SERVICE_UNAVAILABLE, TOO_MANY_REQUESTS } from 'http-status';
 import * as moment from 'moment';
-import { SwiperComponent, SwiperConfigInterface, SwiperDirective } from 'ngx-swiper-wrapper';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
@@ -23,14 +22,10 @@ import { PurchaseTransactionModalComponent } from '../../../../parts';
     styleUrls: ['./purchase-cinema-schedule.component.scss']
 })
 export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
-    @ViewChild(SwiperComponent) public componentRef: SwiperComponent;
-    @ViewChild(SwiperDirective) public directiveRef: SwiperDirective;
     public purchase: Observable<reducers.IPurchaseState>;
     public error: Observable<string | null>;
     public master: Observable<reducers.IMasterState>;
     public user: Observable<reducers.IUserState>;
-    public swiperConfig: SwiperConfigInterface;
-    public scheduleDates: string[];
     public screeningWorkEvents: IScreeningEventWork[];
     public moment: typeof moment = moment;
     public scheduleDate: string;
@@ -45,28 +40,21 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         private translate: TranslateService
     ) { }
 
+    /**
+     * 初期化
+     */
     public async ngOnInit() {
-        this.swiperConfig = {
-            spaceBetween: 1,
-            slidesPerView: 7,
-            breakpoints: {
-                320: { slidesPerView: 2 },
-                767: { slidesPerView: 3 },
-                1024: { slidesPerView: 5 }
-            }
-        };
         this.purchase = this.store.pipe(select(reducers.getPurchase));
         this.error = this.store.pipe(select(reducers.getError));
         this.master = this.store.pipe(select(reducers.getMaster));
         this.user = this.store.pipe(select(reducers.getUser));
         this.screeningWorkEvents = [];
-        this.scheduleDates = [];
-        for (let i = 0; i < 7; i++) {
-            this.scheduleDates.push(moment().add(i, 'day').format('YYYY-MM-DD'));
-        }
         this.selectDate();
     }
 
+    /**
+     * 破棄
+     */
     public ngOnDestroy() {
         clearTimeout(this.updateTimer);
     }
@@ -122,6 +110,9 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         });
     }
 
+    /**
+     * 更新
+     */
     private update() {
         if (this.updateTimer !== undefined) {
             clearTimeout(this.updateTimer);
@@ -133,20 +124,15 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * resize
-     */
-    public resize() {
-        this.directiveRef.update();
-    }
-
-    /**
-     * selectDate
+     * 日付選択
      */
     public selectDate() {
         this.user.subscribe((user) => {
             const seller = user.seller;
             if (this.scheduleDate === undefined || this.scheduleDate === '') {
-                this.scheduleDate = moment().format('YYYY-MM-DD');
+                this.scheduleDate = moment()
+                    .add(environment.PURCHASE_SCHEDULE_DEFAULT_SELECTED_DATE, 'day')
+                    .format('YYYY-MM-DD');
             }
             const scheduleDate = this.scheduleDate;
             if (seller === undefined) {
@@ -184,7 +170,7 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * selectSchedule
+     * スケジュール選択
      */
     public selectSchedule(screeningEvent: factory.chevre.event.screeningEvent.IEvent) {
         if (screeningEvent.remainingAttendeeCapacity === undefined
@@ -238,6 +224,9 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         }).unsubscribe();
     }
 
+    /**
+     * 取引重複モーダル表示
+     */
     public openTransactionModal() {
         this.purchase.subscribe((purchase) => {
             this.user.subscribe((user) => {

@@ -19,3 +19,4 @@ export * from './purchase/cinema/purchase-cinema-ticket-modal/purchase-cinema-ti
 export * from './purchase/event/purchase-event-ticket-modal/purchase-event-ticket-modal.component';
 export * from './transaction-remaining-time/transaction-remaining-time.component';
 export *from './numeric-keypad/numeric-keypad.component';
+export *from './reservation-detail-modal/reservation-detail-modal.component';

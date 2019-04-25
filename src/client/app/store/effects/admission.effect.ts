@@ -65,13 +65,13 @@ export class AdmissionEffects {
                 let page = 1;
                 let roop = true;
                 let screeningEventReservations:
-                    factory.chevre.reservation.event.IReservation<factory.chevre.event.screeningEvent.IEvent>[] = [];
+                    factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>[] = [];
                 while (roop) {
                     const screeningEventReservationsResult =
                         await this.cinerino.reservation.searchScreeningEventReservations({
+                            typeOf: factory.chevre.reservationType.EventReservation,
                             page,
                             limit,
-                            sort: { reservationNumber: factory.chevre.sortType.Ascending },
                             reservationStatuses: [factory.chevre.reservationStatusType.ReservationConfirmed],
                             reservationFor: {
                                 typeOf: factory.chevre.eventType.ScreeningEvent,

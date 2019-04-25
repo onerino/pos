@@ -72,7 +72,7 @@ export class InquiryInputComponent implements OnInit {
         if (this.inquiryForm.invalid) {
             return;
         }
-        const confirmationNumber = Number(this.inquiryForm.controls.confirmationNumber.value);
+        const confirmationNumber = this.inquiryForm.controls.confirmationNumber.value;
         const telephone = this.inquiryForm.controls.telephone.value;
         this.store.dispatch(new orderAction.Inquiry({
             confirmationNumber,

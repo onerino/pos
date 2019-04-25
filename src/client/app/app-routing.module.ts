@@ -18,6 +18,7 @@ import * as development from './routes/development.route';
 import * as inquiry from './routes/inquiry.route';
 import * as order from './routes/order.route';
 import * as purchase from './routes/purchase.route';
+import * as reservation from './routes/reservation.route';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/auth', pathMatch: 'full' },
@@ -27,6 +28,7 @@ const appRoutes: Routes = [
     inquiry.route,
     admission.route,
     order.route,
+    reservation.route,
     development.route,
     {
         path: '',

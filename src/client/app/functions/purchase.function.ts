@@ -1,4 +1,5 @@
 import { factory } from '@cinerino/api-javascript-client';
+import * as moment from 'moment';
 import { environment } from '../../environments/environment';
 import { IMovieTicket } from '../models';
 
@@ -136,7 +137,7 @@ export function createMovieTicketsFromAuthorizeSeatReservation(args: {
         return [];
     }
     const pendingReservations =
-        (<factory.chevre.reservation.IReservation<factory.chevre.event.screeningEvent.ITicketPriceSpecification>[]>
+        (<factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>[]>
             (<any>authorizeSeatReservation.result.responseBody).object.reservations);
 
     pendingReservations.forEach((pendingReservation) => {
@@ -396,4 +397,41 @@ export function isScheduleStatusThreshold(
     } else {
         return false;
     }
+}
+
+/**
+ * 販売判定
+ */
+export function isSales(
+    screeningEvent: factory.chevre.event.screeningEvent.IEvent,
+    status?: 'window' | 'start' | 'end'
+) {
+    const offers = screeningEvent.offers;
+    if (offers === undefined) {
+        return false;
+    }
+    let result = false;
+    switch (status) {
+        case 'window':
+            result = false;
+            break;
+        case 'start':
+            result = !(moment(offers.validFrom).unix() < moment().unix());
+            break;
+        case 'end':
+            result = !(moment(offers.validThrough).unix() > moment().unix());
+            break;
+        default:
+            result = (moment(offers.validFrom).unix() < moment().unix()
+                && moment(offers.validThrough).unix() > moment().unix());
+            break;
+    }
+    return result;
+}
+
+export function isTicketedSeatScreeningEvent(screeningEvent: factory.chevre.event.screeningEvent.IEvent) {
+    return (screeningEvent.offers !== undefined
+        && screeningEvent.offers.itemOffered.serviceOutput !== undefined
+        && screeningEvent.offers.itemOffered.serviceOutput.reservedTicket !== undefined
+        && screeningEvent.offers.itemOffered.serviceOutput.reservedTicket.ticketedSeat !== undefined);
 }

@@ -23,11 +23,15 @@ html, body {
 }
 body {
     text-size-adjust: 100%;
-    -webkit-touch-callout: none;
-    user-select: none;
+    // -webkit-touch-callout: none;
+    // user-select: none;
     background-attachment: fixed;
     font-family: $font-family;
     font-size: $body-font-size;
+}
+
+::placeholder {
+    opacity: 0.75 !important;
 }
 
 code {

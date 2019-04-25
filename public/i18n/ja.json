@@ -193,7 +193,7 @@
         }
     },
     "order": {
-        "list": {
+        "search": {
             "title": "注文検索",
             "read": "検索してください。",
             "next": "",
@@ -228,6 +228,29 @@
                 "cancel": "キャンセルしてよろしいですか。",
                 "print": "印刷してよろしいですか。"
             }
+        }
+    },
+    "reservation": {
+        "search": {
+            "title": "予約検索",
+            "read": "検索してください。",
+            "next": "",
+            "prev": "戻る",
+            "conditions": {
+                "reservationDateFrom": "予約日（From）",
+                "reservationDateThrough": "予約日（Through）",
+                "eventStartDateFrom": "上映日（From）",
+                "eventStartDateThrough": "上映日（Through）",
+                "telephone": "電話番号（下4桁）"
+            },
+            "reservationStatus": {
+                "ReservationConfirmed": "Reservation Confirmed",
+                "ReservationHold": "Reservation Hold",
+                "ReservationPending": "Reservation Pending"
+            },
+            "search": "検索する",
+            "notfound": "予約が見つかりません",
+            "unselected": "選択してください"
         }
     },
     "admission": {
@@ -365,6 +388,7 @@
         "purchase": "購入",
         "inquiry": "照会",
         "orderSearch": "注文検索",
+        "reservationSearch": "予約検索",
         "admission": "入場",
         "settings": "設定",
         "logout": "ログアウト",
@@ -432,6 +456,9 @@
             "Inquiry": "注文情報を照会しています",
             "OrderAuthorize": "注文情報を承認しています"
         },
+        "reservationAction": {
+            "Search": "予約情報を取得しています"
+        },
         "purchaseAction": {
             "StartTransaction": "取引を開始しています",
             "GetScreen": "スクリーン情報を取得しています",
@@ -449,6 +476,9 @@
         },
         "userAction": {}
     },
+    "footer": {
+        "copyright": "Copyright (c) Motionpicture co.,ltd. All rights reserved."
+    },
     "common": {
         "date": {
             "year": "年",
@@ -459,6 +489,9 @@
             "second": "秒"
         },
         "confirmationNumber": "購入番号",
+        "orderNumber": "注文番号",
+        "reservationId": "予約ID",
+        "reservationNumber": "予約番号",
         "theater": "劇場",
         "screen": "スクリーン",
         "event": "作品",
@@ -482,6 +515,8 @@
         "subtitles": "字幕版",
         "orderDate": "購入日時",
         "orderStatus": "注文ステータス",
+        "reservationStatus": "予約ステータス",
+        "qrcode": "QRコード",
         "credit": {
             "cardNumber": "カード番号",
             "cardExpiration": "カード有効期限",
