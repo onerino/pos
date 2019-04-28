@@ -29,7 +29,7 @@ export class ReservationEffects {
                 //     && params.customer.telephone !== undefined) {
                 //     params.customer.telephone = formatTelephone(params.customer.telephone)
                 // }
-                const searchResult = await this.cinerino.reservation.searchScreeningEventReservations(params);
+                const searchResult = await this.cinerino.reservation.search(params);
                 const limit = <number>params.limit;
                 return new reservationAction.SearchSuccess({ searchResult, limit });
             } catch (error) {

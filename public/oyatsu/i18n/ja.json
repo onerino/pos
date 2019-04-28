@@ -1,0 +1,541 @@
+{
+    "purchase": {
+        "cinema": {
+            "seller": {
+                "title": "劇場選択",
+                "read": "劇場を選択してください。",
+                "next": "",
+                "prev": ""
+            },
+            "schedule": {
+                "title": "スケジュール選択",
+                "read": "スケジュールを選択してください。",
+                "preSalesSchedule": "先行販売スケジュール",
+                "salesSchedule": "通常販売スケジュール",
+                "notfound": "スケジュールがありません。",
+                "status": {
+                    "success": "購入",
+                    "warning": "購入",
+                    "danger": "満席",
+                    "endSale": "販売終了",
+                    "outsideSalesPeriod": "販売期間外"
+                },
+                "infiniteStock": "在庫管理なし",
+                "next": "次へ",
+                "prev": "",
+                "alert": {
+                    "ticketedSeat": "劇場表示では座席管理なしのパフォーマンスを選択できません。"
+                }
+            },
+            "seat": {
+                "title": "座席選択",
+                "read": "座席を選択してください。",
+                "next": "利用規約に同意して次へ",
+                "terms": "利用規約",
+                "prev": "戻る",
+                "allSelect": "すべて選択",
+                "reset": "リセット",
+                "alert": {
+                    "unselected": "座席が未選択です。"
+                }
+            },
+            "ticket": {
+                "title": "券種選択",
+                "read": "券種を選択してください。",
+                "unselected": "券種を選択してください",
+                "mvtk": "ムビチケ券を利用される方",
+                "next": "次へ",
+                "prev": "戻る",
+                "allSelect": "すべて選択",
+                "alert": {
+                    "unselected": "券種が未選択です。",
+                    "ticketCondition": "割引券の適用条件を再度ご確認ください。"
+                }
+            },
+            "cart": {
+                "title": "購入情報",
+                "read": "購入情報をご確認ください。",
+                "notfound": "購入中のアイテムがありません。",
+                "next": "次へ",
+                "prev": "戻る",
+                "add": "追加する",
+                "confirm": {
+                    "cancel": "キャンセルしてよろしいですか。"
+                }
+            }
+        },
+        "event": {
+            "seller": {
+                "title": "劇場選択",
+                "read": "劇場を選択してください。",
+                "next": "",
+                "prev": ""
+            },
+            "schedule": {
+                "title": "スケジュール確認",
+                "read": "スケジュールを確認してください。",
+                "notfound": "スケジュールがありません。",
+                "status": {
+                    "success": "購入",
+                    "warning": "購入",
+                    "danger": "満席",
+                    "endSale": "販売終了",
+                    "outsideSalesPeriod": "販売期間外"
+                },
+                "infiniteStock": "在庫管理なし",
+                "next": "次へ",
+                "prev": ""
+            },
+            "ticket": {
+                "title": "券種選択",
+                "read": "券種を選択してください。",
+                "next": "次へ",
+                "prev": "戻る",
+                "success": {
+                    "temporaryReservation": "仮予約に成功しました。"
+                },
+                "alert": {
+                    "unselected": "券種が未選択です。",
+                    "ticketCondition": "割引券の適用条件を再度ご確認ください。",
+                    "temporaryReservation": "仮予約に失敗しました。",
+                    "limit": "同時購入可能数は{{value}}件までです。"
+                }
+                
+            },
+            "cart": {
+                "title": "購入情報",
+                "read": "購入情報をご確認ください。",
+                "notfound": "購入中のアイテムがありません。",
+                "next": "次へ",
+                "prev": "戻る",
+                "add": "追加する",
+                "confirm": {
+                    "cancel": "キャンセルしてよろしいですか。"
+                }
+            }
+        },
+        "input": {
+            "title": "購入者情報入力",
+            "read": "購入者情報を入力してください。",
+            "payment": {
+                "title": "決済情報入力",
+                "read": "決済情報を入力してください。"
+            },
+            "securityCode": "セキュリティーコードについて",
+            "next": "次へ",
+            "prev": "戻る",
+            "alert": {
+                "customer": "購入者情報に誤りがあります。",
+                "payment": "決済情報に誤りがあります。",
+                "gmoToken": "クレジットカード情報を確認してください。"
+            }
+        },
+        "payment": {
+            "title": "決済方法選択",
+            "read": "決済方法を選択してください。",
+            "notfound": "購入中のアイテムがありません。",
+            "cash": "現金",
+            "creditCard": "クレジットカード",
+            "eMoney": "電子マネー",
+            "next": "次へ",
+            "prev": "戻る",
+            "alert": {
+                "notCompatible": "支払い方法が未対応です。"
+            }
+        },
+        "confirm": {
+            "title": "購入情報確認",
+            "read": "購入情報をご確認ください。",
+            "next": "購入確定",
+            "prev": "戻る",
+            "custody": "お預かり金額",
+            "change": "お釣り",
+            "alert": {
+                "authorizeCreditCard": "クレジットカード情報を確認してください。",
+                "custody": "お預かり金額に誤りがあります。"
+            }
+        },
+        "complete": {
+            "title": "購入完了",
+            "read": "ご購入ありがとうございます。",
+            "next": "再印刷",
+            "prev": "戻る",
+            "alert": {
+                "print": "印刷に失敗しました"
+            }
+        },
+        "info": {
+            "read": "現在、選択されているチケットは下記のとおりです。"
+        }
+    },
+    "inquiry": {
+        "input": {
+            "title": "チケット情報照会",
+            "read": "予約番号と電話番号を入力してください。",
+            "next": "照会",
+            "prev": "戻る",
+            "validation": "入力情報に誤りがあります。"
+        },
+        "confirm": {
+            "title": "照会結果",
+            "read": "ご購入ありがとうございます。",
+            "next": "印刷",
+            "prev": "戻る",
+            "cancel": "キャンセル",
+            "alert": {
+                "cancel": "キャンセルに失敗しました。",
+                "authorize": "QRコード表示を表示できません。",
+                "print": "印刷に失敗しました"
+            },
+            "confirm": {
+                "cancel": "キャンセルしてよろしいですか。"
+            }
+        }
+    },
+    "order": {
+        "search": {
+            "title": "注文検索",
+            "read": "検索してください。",
+            "next": "",
+            "prev": "戻る",
+            "conditions": {
+                "orderDateFrom": "購入日（From）",
+                "orderDateThrough": "購入日（Through）",
+                "telephone": "電話番号（下4桁）"
+            },
+            "orderStatus": {
+                "orderCancelled": "Order Cancelled",
+                "orderDelivered": "配送済み",
+                "orderPaymentDue": "Order Payment Due",
+                "orderPickupAvailable": "Order Pickup Available",
+                "orderProblem": "Order Problem",
+                "orderProcessing": "配送中",
+                "orderReturned": "返品済み"
+            },
+            "search": "検索する",
+            "notfound": "注文が見つかりません",
+            "unselected": "選択してください",
+            "cancel": "キャンセル",
+            "print": "印刷",
+            "apply": "適用",
+            "download": "CSVダウンロード",
+            "alert": {
+                "cancel": "キャンセルに失敗しました。",
+                "unselected": "注文が選択されていません。",
+                "authorize": "QRコード表示を表示できません。",
+                "print": "印刷に失敗しました"
+            },
+            "confirm": {
+                "cancel": "キャンセルしてよろしいですか。",
+                "print": "印刷してよろしいですか。"
+            }
+        }
+    },
+    "reservation": {
+        "search": {
+            "title": "予約検索",
+            "read": "検索してください。",
+            "next": "",
+            "prev": "戻る",
+            "conditions": {
+                "reservationDateFrom": "予約日（From）",
+                "reservationDateThrough": "予約日（Through）",
+                "eventStartDateFrom": "上映日（From）",
+                "eventStartDateThrough": "上映日（Through）",
+                "telephone": "電話番号（下4桁）"
+            },
+            "reservationStatus": {
+                "ReservationConfirmed": "Reservation Confirmed",
+                "ReservationHold": "Reservation Hold",
+                "ReservationPending": "Reservation Pending"
+            },
+            "search": "検索する",
+            "notfound": "予約が見つかりません",
+            "unselected": "選択してください",
+            "download": "CSVダウンロード"
+        }
+    },
+    "admission": {
+        "schedule": {
+            "title": "入場スケジュール選択",
+            "read": "入場スケジュールを選択してください",
+            "next": "",
+            "prev": "戻る",
+            "notfound": "スケジュールがありません。",
+            "infiniteStock": "在庫管理なし",
+            "status": {
+                "opening": "開場中",
+                "nowShowing": "上映中",
+                "beforeOpening": "開場前",
+                "filmCompletion": "上映終了"
+            }
+        },
+        "check": {
+            "title": "入場確認",
+            "read": "入場を確認してください。",
+            "next": "印刷",
+            "prev": "戻る",
+            "camera": {
+                "start": "カメラで読み取り",
+                "stop": "カメラを停止"
+            },
+            "success": "入場可",
+            "reEntry": "再入場可",
+            "danger": "入場不可",
+            "waiting": "待機中",
+            "entryCount": "入場回数",
+            "alert": {
+                "event": "上映会をご確認ください",
+                "qrcode": "QRコードをご確認ください",
+                "waiting": "QRコードを読み取ってください",
+                "check": "読み込みに失敗しました。",
+                "camera": "カメラへのアクセスに失敗しました。"
+            }
+        }
+    },
+    "error": {
+        "title": "エラー",
+        "read": "エラーが発生しました。",
+        "next": "",
+        "prev": "戻る"
+    },
+    "notfound": {
+        "title": "NOT FOUND",
+        "read": "ページが見つかりません。",
+        "next": "",
+        "prev": "戻る"
+    },
+    "expired": {
+        "title": "エラー",
+        "read": "取引の期限が切れました。",
+        "next": "",
+        "prev": "戻る"
+    },
+    "congestion": {
+        "title": "只今、アクセスが混雑しております。",
+        "read": "現在アクセスが集中しております。<br>誠に申し訳ございませんがしばらく時間を置いてから再度アクセスしてください。",
+        "next": "",
+        "prev": "戻る"
+    },
+    "maintenance": {
+        "title": "メンテナンス",
+        "read": "メンテナンスの為、インターネットでの販売を停止させていただきます。",
+        "next": "",
+        "prev": "戻る"
+    },
+    "setting": {
+        "title": "設定",
+        "read": "設定を変更できます。",
+        "next": "設定を変更",
+        "prev": "戻る",
+        "unselected": "選択してください",
+        "pos": "POS",
+        "printer": "プリンター",
+        "printerIpAddress": "プリンターIPアドレス",
+        "printerIpAddressDescription": "※スター精密 Bluetooth接続(StarwebPRNT専用ブラウザー)の場合localhost:8001を設定してください。",
+        "testPrinting": "テスト印刷",
+        "purchaseCartMaxLength": "注文に対する予約上限数",
+        "viewType": "表示",
+        "alert": {
+            "customer": "購入者情報に誤りがあります。",
+            "payment": "決済情報に誤りがあります。",
+            "validation": "入力情報に誤りがあります。",
+            "success": "設定を保存しました。",
+            "print": "印刷に失敗しました"
+        }
+    },
+    "development": {
+        "index": {
+            "title": "開発",
+            "read": "機能を確認できます。",
+            "screen": "座席表確認",
+            "encryption": "暗号化確認",
+            "next": "",
+            "prev": "戻る"
+        },
+        "screen": {
+            "title": "座席表確認",
+            "read": "座席表を確認できます。",
+            "next": "更新",
+            "prev": "戻る"
+        },
+        "encryption": {
+            "title": "暗号化確認",
+            "read": "暗号化、復号化の確認ができます。",
+            "next": "更新",
+            "prev": "戻る",
+            "encodeText": "暗号化する文字列",
+            "encode": "暗号化",
+            "encrypted": "暗号化文字列",
+            "qrcode": "QRコード(salt,iv,encrypted)",
+            "iv": "IV(初期化ベクトル)",
+            "salt": "salt",
+            "decode": "復号化",
+            "decrypted": "復号化文字列"
+        }
+    },
+    "form": {
+        "validation": {
+            "required": "未入力です",
+            "maxlength": "{{value}}文字以下で入力してください",
+            "minlength": "{{value}}文字以上で入力してください",
+            "fullKana": "全角カタカナで入力してください",
+            "number": "数字で入力してください",
+            "email": "形式が正しくありません",
+            "telephone": "形式が正しくありません",
+            "unselected": "未選択です。"
+        }
+    },
+    "menu": {
+        "purchase": "購入",
+        "inquiry": "照会",
+        "orderSearch": "注文検索",
+        "reservationSearch": "予約検索",
+        "admission": "入場",
+        "settings": "設定",
+        "logout": "ログアウト",
+        "login": "ログイン",
+        "confirm": {
+            "login": "ログインしてよろしいですか。",
+            "logout": "ログアウトしてよろしいですか。"
+        },
+        "development": "開発"
+    },
+    "modal": {
+        "mvtkCheck": {
+            "success": "ムビチケ券を追加しました。",
+            "purchaseNumber": "ムビチケ購入番号",
+            "pin": "ムビチケ暗証番号",
+            "camera": {
+                "start": "カメラで読み取り",
+                "stop": "カメラを停止"
+            },
+            "next": "認証",
+            "prev": "",
+            "alert": {
+                "validation": "ムビチケ情報をご確認ください。",
+                "used": "すでに使用済みのムビチケです。",
+                "error": "エラーが発生しました"
+            }
+        },
+        "purchaseTransaction": {
+            "title": "確認",
+            "read": "取引中の取引があります。",
+            "next": "追加して進む",
+            "prev": "カートへ移動"
+        },
+        "securityCode": {
+            "title": "セキュリティーコードについて",
+            "read": "カード会社により表示箇所および名称が異なります",
+            "back": {
+                "title": "VISA / MASTER / DINERS / JCBの場合",
+                "read": "【カード裏面】セキュリティーコード(末尾3桁)"
+            },
+            "front": {
+                "title": "AMEXの場合",
+                "read": "【カード表面】セキュリティーコード(4桁)"
+            },
+            "next": "追加して進む",
+            "prev": "カートへ移動"
+        }
+    },
+    "process": {
+        "authAction": {
+            "CheckLogin": "ログインを確認しています",
+            "Logout": "ログアウトしています"
+        },
+        "admissionAction": {
+            "Check": "QRコードを確認しています"
+        },
+        "masterAction": {
+            "GetSellers": "劇場情報を取得しています",
+            "GetSchedule": "スケジュールを取得しています"
+        },
+        "orderAction": {
+            "Search": "注文情報を取得しています",
+            "Cancel": "注文情報をキャンセルしています",
+            "Print": "印刷しています",
+            "Inquiry": "注文情報を照会しています",
+            "OrderAuthorize": "注文情報を承認しています"
+        },
+        "reservationAction": {
+            "Search": "予約情報を取得しています"
+        },
+        "purchaseAction": {
+            "StartTransaction": "取引を開始しています",
+            "GetScreen": "スクリーン情報を取得しています",
+            "GetTicketList": "券種情報を取得しています",
+            "TemporaryReservation": "仮予約しています",
+            "TemporaryReservationFreeSeat": "仮予約しています",
+            "CancelTemporaryReservations": "仮予約をキャンセルしています",
+            "RegisterContact": "購入者情報を登録しています",
+            "AuthorizeCreditCard": "クレジットカード情報を承認しています",
+            "CreateGmoTokenObject": "GMOオブジェクトを作成しています",
+            "AuthorizeMovieTicket": "ムビチケ情報を承認しています",
+            "CheckMovieTicket": "ムビチケ情報を確認しています",
+            "Reserve": "取引を確定しています",
+            "AuthorizeAnyPayment": "決済情報を承認しています"
+        },
+        "userAction": {}
+    },
+    "footer": {
+        "copyright": "Copyright (c) Motionpicture co.,ltd. All rights reserved."
+    },
+    "common": {
+        "date": {
+            "year": "年",
+            "month": "月",
+            "day": "日",
+            "hour": "時",
+            "minute": "分",
+            "second": "秒"
+        },
+        "confirmationNumber": "購入番号",
+        "orderNumber": "注文番号",
+        "reservationId": "予約ID",
+        "reservationNumber": "予約番号",
+        "theater": "劇場",
+        "screen": "スクリーン",
+        "event": "作品",
+        "startDate": "上映日時",
+        "doorTime": "開場日時",
+        "seat": "座席",
+        "ticket": "券種",
+        "customer": "購入者",
+        "customerName": "お名前",
+        "familyName": "姓（全角カタカナ）",
+        "givenName": "名（全角カタカナ）",
+        "email": "メールアドレス",
+        "emailDescription": "【ドメイン指定受信をご利用の場合について】 <br>※ 携帯電話のドメイン指定受信をされている場合、「@example.com」を追加設定してください。 <br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@example.com」の追加設定をしてください。",
+        "telephone": "電話番号",
+        "paymentMethod": "決済方法",
+        "ticketing": "発券",
+        "admission": "入場",
+        "reservation": "予約",
+        "amount": "決済金額",
+        "dubbing": "吹替版",
+        "subtitles": "字幕版",
+        "orderDate": "購入日時",
+        "orderStatus": "注文ステータス",
+        "reservationStatus": "予約ステータス",
+        "qrcode": "QRコード",
+        "credit": {
+            "cardNumber": "カード番号",
+            "cardExpiration": "カード有効期限",
+            "securityCode": "セキュリティーコード",
+            "holderName": "カード名義人"
+        },
+        "timeLimit": "取引期限",
+        "all": "すべて",
+        "close": "閉じる",
+        "done": "決定",
+        "yes": "はい",
+        "no": "いいえ",
+        "error": "エラー",
+        "confirm": "確認",
+        "complete": "完了",
+        "warning": "警告",
+        "change": "変更",
+        "remove": "削除"
+    }
+}

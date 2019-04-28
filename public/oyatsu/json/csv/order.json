@@ -1,0 +1,21 @@
+[
+    { "label": "注文日時", "value": "orderDateJST" },
+    { "label": "注文番号", "value": "orderNumber" },
+    { "label": "注文ステータス", "value": "orderStatus" },
+    { "label": "購入番号", "value": "confirmationNumber" },
+    { "label": "注文金額", "value": "price" },
+    { "label": "販売者Id", "value": "seller.id" },
+    { "label": "販売者", "value": "seller.name" },
+    { "label": "決済方法", "value": "paymentMethodsNames" },
+    { "label": "セイ", "value": "customer.familyName" },
+    { "label": "メイ", "value": "customer.givenName" },
+    { "label": "メールアドレス", "value": "customer.email" },
+    { "label": "電話番号", "value": "customer.telephone" },
+    { "label": "アイテムId", "value": "itemOffered.id" },
+    { "label": "アイテム金額", "value": "itemOffered.price" },
+    { "label": "券種Id", "value": "itemOffered.reservedTicket.ticketType.id" },
+    { "label": "券種名", "value": "itemOffered.reservedTicket.ticketType.name.ja" },
+    { "label": "イベント名", "value": "itemOffered.reservationFor.name.ja" },
+    { "label": "スクリーン名", "value": "itemOffered.reservationFor.location.name.ja" },
+    { "label": "上映時間", "value": "itemOffered.reservationFor.startDateJST" }
+]

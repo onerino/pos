@@ -3,10 +3,14 @@ import * as libphonenumber from 'libphonenumber-js';
 /**
  * 電話番号変換
  */
-export function formatTelephone(telephone: string) {
+export function formatTelephone(telephone: string, format?: libphonenumber.NumberFormat) {
+    if (telephone === undefined) {
+        return '';
+    }
     const parseNumber = libphonenumber.parse(telephone, 'JP');
+    format = (format === undefined) ? 'International' : format;
 
-    return libphonenumber.format(parseNumber, 'International').replace(/\s/g, '');
+    return libphonenumber.format(parseNumber, format).replace(/\s/g, '');
 }
 
 /**
@@ -73,3 +77,34 @@ export async function sleep(time: number) {
         }, time);
     });
 }
+
+
+/**
+ * クエリストリング変換
+ */
+export function buildQueryString(obj: any) {
+    let query = '';
+    let key;
+    let val;
+
+    const fixedEncodeURIComponent = (str: string) => {
+        return encodeURIComponent(str).replace(/[!'()]/g, escape).replace(/\*/g, '%2A');
+    };
+
+    for (key in obj) {
+        if (!obj.hasOwnProperty(key)) {
+            continue;
+        }
+
+        val = obj[key];
+        query += (query === '') ? '' : '&';
+        query += fixedEncodeURIComponent(key) + '=';
+
+        if (val != null) {
+            query += fixedEncodeURIComponent(val);
+        }
+    }
+
+    return query;
+}
+

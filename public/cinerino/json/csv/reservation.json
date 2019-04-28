@@ -1,0 +1,14 @@
+[
+    { "label": "予約日時", "value": "bookingTimeJST" },
+    { "label": "予約Id", "value": "id" },
+    { "label": "予約番号", "value": "reservationNumber" },
+    { "label": "予約ステータス", "value": "reservationStatus" },
+    { "label": "予約金額", "value": "price" },
+    { "label": "券種Id", "value": "reservedTicket.ticketType.id" },
+    { "label": "券種名", "value": "reservedTicket.ticketType.name.ja" },
+    { "label": "イベント名", "value": "reservationFor.name.ja" },
+    { "label": "スクリーン名", "value": "reservationFor.location.name.ja" },
+    { "label": "上映時間", "value": "reservationFor.startDateJST" },
+    { "label": "発券", "value": "checkedIn" },
+    { "label": "入場", "value": "attended" }
+]

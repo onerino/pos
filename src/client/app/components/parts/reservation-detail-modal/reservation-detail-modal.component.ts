@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { factory } from '@cinerino/api-javascript-client';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { environment } from '../../../../environments/environment';
 import { getTicketPrice } from '../../../functions';
 
 @Component({
@@ -13,6 +14,8 @@ export class ReservationDetailModalComponent implements OnInit {
     @Input() public reservation: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>;
     public moment: typeof moment = moment;
     public getTicketPrice = getTicketPrice;
+    public environment = environment;
+
     constructor(
         public activeModal: NgbActiveModal,
         private elementRef: ElementRef

@@ -14,6 +14,6 @@ exports.default = (app) => {
     app.get('/signIn', authorize.signInRedirect);
     app.get('/signIn', authorize.signOutRedirect);
     app.get('*', (_req, res, _next) => {
-        res.sendFile(path.resolve(`${__dirname}/../../../client/index.html`));
+        res.sendFile(path.resolve(`${__dirname}/../../../client/${process.env.NODE_ENV}/index.html`));
     });
 };

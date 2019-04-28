@@ -12,6 +12,7 @@ import { SwiperModule } from 'ngx-swiper-wrapper';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 
+import { environment } from '../environments/environment';
 import {
     AdmissionCheckComponent,
     AdmissionScheduleComponent,
@@ -63,6 +64,7 @@ import {
     PurchaseEventPerformanceConfirmComponent,
     PurchaseEventTicketModalComponent,
     PurchaseInfoComponent,
+    PurchaseTermsComponent,
     PurchaseTransactionModalComponent,
     QrCodeModalComponent,
     ReservationDetailModalComponent,
@@ -76,7 +78,7 @@ import { StoreModule } from './store.module';
 import { CoreStoreModule } from './store/core/store';
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, '/i18n/');
+    return new TranslateHttpLoader(http, `/${environment.PROJECT_ID}/i18n/`);
 }
 
 @NgModule({
@@ -138,6 +140,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         PurchaseEventPerformanceConfirmComponent,
         ReservationSearchComponent,
         ReservationDetailModalComponent,
+        PurchaseTermsComponent
     ],
     entryComponents: [
         PurchaseCinemaTicketModalComponent,

@@ -125,7 +125,7 @@ export class PurchaseCinemaTicketComponent implements OnInit {
         race(success, fail).pipe(take(1)).subscribe();
     }
 
-    public openTicketList(reservation: Reservation) {
+    public openTicketList(reservation?: Reservation) {
         const modalRef = this.modal.open(PurchaseCinemaTicketModalComponent, {
             centered: true
         });

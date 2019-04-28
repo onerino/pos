@@ -7,6 +7,7 @@ import jsqr from 'jsqr';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 import { UtilService } from '../../../../services';
 import { admissionAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
@@ -27,6 +28,7 @@ export class AdmissionCheckComponent implements OnInit, OnDestroy {
     public updateLoop: any;
     public moment: typeof moment = moment;
     public inputCode: string;
+    public environment = environment;
 
     constructor(
         private store: Store<reducers.IState>,

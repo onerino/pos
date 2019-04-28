@@ -8,8 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
+import { buildQueryString } from '../../../../functions';
 import { IOrderSearchConditions, OrderActions } from '../../../../models';
-import { UtilService } from '../../../../services';
+import { DownloadService, UtilService } from '../../../../services';
 import { orderAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 import { OrderDetailModalComponent, QrCodeModalComponent } from '../../../parts';
@@ -21,6 +23,7 @@ import { OrderDetailModalComponent, QrCodeModalComponent } from '../../../parts'
 })
 export class OrderSearchComponent implements OnInit {
     public isLoading: Observable<boolean>;
+    public isDownload: boolean;
     public error: Observable<string | null>;
     public order: Observable<reducers.IOrderState>;
     public user: Observable<reducers.IUserState>;
@@ -32,6 +35,8 @@ export class OrderSearchComponent implements OnInit {
     public selectedOrders: factory.order.IOrder[];
     public OrderActions: typeof OrderActions = OrderActions;
     public actionSelect: OrderActions | '';
+    public buildQueryString = buildQueryString;
+    public environment = environment;
 
     constructor(
         private store: Store<reducers.IOrderState>,
@@ -39,10 +44,12 @@ export class OrderSearchComponent implements OnInit {
         private modal: NgbModal,
         private router: Router,
         private util: UtilService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private download: DownloadService
     ) { }
 
     public ngOnInit() {
+        this.isDownload = false;
         this.actionSelect = '';
         this.selectedOrders = [];
         this.isLoading = this.store.pipe(select(reducers.getLoading));
@@ -82,29 +89,12 @@ export class OrderSearchComponent implements OnInit {
     }
 
     /**
-     * 検索
+     * 検索パラメータへ変換
      */
-    public orderSearch(changeConditions: boolean) {
-        this.selectedOrders = [];
-        if (changeConditions) {
-            this.confirmedConditions = {
-                orderDateFrom: this.conditions.orderDateFrom,
-                orderDateThrough: this.conditions.orderDateThrough,
-                confirmationNumber: this.conditions.confirmationNumber,
-                orderNumber: this.conditions.orderNumber,
-                customer: {
-                    familyName: this.conditions.customer.familyName,
-                    givenName: this.conditions.customer.givenName,
-                    email: this.conditions.customer.email,
-                    telephone: this.conditions.customer.telephone
-                },
-                orderStatuses: this.conditions.orderStatuses,
-                page: 1
-            };
-        }
-        this.user.subscribe((user) => {
-            this.store.dispatch(new orderAction.Search({
-                params: {
+    public async convertToSearchParams() {
+        return new Promise<factory.order.ISearchConditions>((resolve) => {
+            this.user.subscribe((user) => {
+                const params: factory.order.ISearchConditions = {
                     seller: {
                         typeOf: (user.seller === undefined)
                             ? undefined : user.seller.typeOf,
@@ -136,9 +126,36 @@ export class OrderSearchComponent implements OnInit {
                     sort: {
                         orderDate: factory.sortType.Descending
                     }
-                }
-            }));
-        }).unsubscribe();
+                };
+                resolve(params);
+            }).unsubscribe();
+        });
+    }
+
+    /**
+     * 検索
+     */
+    public orderSearch(changeConditions: boolean) {
+        this.selectedOrders = [];
+        if (changeConditions) {
+            this.confirmedConditions = {
+                orderDateFrom: this.conditions.orderDateFrom,
+                orderDateThrough: this.conditions.orderDateThrough,
+                confirmationNumber: this.conditions.confirmationNumber,
+                orderNumber: this.conditions.orderNumber,
+                customer: {
+                    familyName: this.conditions.customer.familyName,
+                    givenName: this.conditions.customer.givenName,
+                    email: this.conditions.customer.email,
+                    telephone: this.conditions.customer.telephone
+                },
+                orderStatuses: this.conditions.orderStatuses,
+                page: 1
+            };
+        }
+        this.convertToSearchParams().then((params) => {
+            this.store.dispatch(new orderAction.Search({ params }));
+        });
 
         const success = this.actions.pipe(
             ofType(orderAction.ActionTypes.SearchSuccess),
@@ -326,5 +343,20 @@ export class OrderSearchComponent implements OnInit {
         );
         race(success, fail).pipe(take(1)).subscribe();
     }
+
+    /**
+     * CSVダウンロード
+     */
+    public async downloadCsv() {
+        this.isDownload = true;
+        try {
+            const params = await this.convertToSearchParams();
+            await this.download.order(params);
+        } catch (error) {
+            console.error(error);
+        }
+        this.isDownload = false;
+    }
+
 
 }

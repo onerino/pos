@@ -35,7 +35,7 @@
 
             <div *ngFor="let acceptedOffer of authorizeSeatReservation.object.acceptedOffer">
                 <p>
-                    <span *ngIf="acceptedOffer.itemOffered.serviceOutput.reservedTicket.ticketedSeat">
+                    <span *ngIf="acceptedOffer.itemOffered.serviceOutput.reservedTicket.ticketedSeat && environment.DISPLAY_TICKETED_SEAT">
                         {{ acceptedOffer.ticketedSeat.seatNumber }}&nbsp;/&nbsp;</span>{{ acceptedOffer.name | changeLanguage }}&nbsp;/&nbsp;{{
                             getTicketPrice(acceptedOffer).single | currency : 'JPY' }}
                 </p>
@@ -63,8 +63,7 @@
                 <div class="row align-items-center">
                     <p class="mb-2 mb-md-0 col-md-4">
                         <i class="fas fa-arrow-left mr-2"></i>{{ 'purchase.confirm.change' | translate }}</p>
-                    <p class="col-md-8">{{ (depositAmount - amount) |
-                    currency : 'JPY' }}</p>
+                    <p class="col-md-8">{{ (depositAmount - amount) | currency : 'JPY' }}</p>
                 </div>
             </div>
         </div>

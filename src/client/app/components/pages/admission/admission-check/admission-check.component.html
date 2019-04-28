@@ -26,7 +26,7 @@
                 class="flash-text text-xx-large font-weight-bold mb-2">{{ 'admission.check.success' | translate }}</div>
             <div *ngIf="(admission | async).qrcodeToken.checkTokenActions.length > 0"
                 class="flash-text text-xx-large font-weight-bold mb-2">{{ 'admission.check.reEntry' | translate }}</div>
-            <p *ngIf="(admission | async).qrcodeToken.availableReservation.reservedTicket.ticketedSeat">
+            <p *ngIf="(admission | async).qrcodeToken.availableReservation.reservedTicket.ticketedSeat && environment.DISPLAY_TICKETED_SEAT">
                 <strong class="mr-2">{{ 'common.seat' | translate }}</strong>
                 {{ (admission | async).qrcodeToken.availableReservation.reservedTicket.ticketedSeat.seatNumber }}
             </p>

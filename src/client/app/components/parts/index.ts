@@ -13,6 +13,7 @@ export * from './purchase/event/purchase-event-performance/purchase-event-perfor
 export * from './purchase/event/purchase-event-performance-confirm/purchase-event-performance-confirm.component';
 export * from './purchase/purchase-info/purchase-info.component';
 export * from './purchase/purchase-transaction-modal/purchase-transaction-modal.component';
+export * from './purchase/purchase-terms/purchase-terms.component';
 export * from './qrcode-modal/qrcode-modal.component';
 export * from './screen/screen.component';
 export * from './purchase/cinema/purchase-cinema-ticket-modal/purchase-cinema-ticket-modal.component';

@@ -80,6 +80,10 @@
     <p *ngIf="(order | async).orders.length === 0">{{ 'order.search.notfound' | translate }}</p>
 
     <div *ngIf="(order | async).orders.length > 0">
+        <div class="mb-3 text-md-left text-center">
+            <button class="btn btn-primary" (click)="downloadCsv()"
+                [disabled]="isDownload">{{ 'order.search.download' | translate }}</button>
+        </div>
         <div class="d-md-flex align-items-center justify-content-between mb-4">
             <div class="text-md-right text-center mb-3 mb-md-0 order-2">
                 <ngb-pagination class="d-inline-block" [(page)]="confirmedConditions.page"
@@ -100,7 +104,7 @@
         </div>
 
         <div class="scroll-horizontal">
-            <table class="table bg-white border text-small mb-0">
+            <table class="table bg-white border text-small mb-0 border border-gray">
                 <thead>
                     <tr>
                         <th scope="col"></th>
@@ -152,13 +156,15 @@
                         <td class="align-middle">
                             <button class="btn btn-primary mr-2" (click)="openDetail(order)"><i
                                     class="fas fa-search-plus"></i></button>
-                            <button [disabled]="order.orderStatus !== orderStatus.OrderDelivered"
+                            <button *ngIf="environment.ORDER_QRCODE"
+                                [disabled]="order.orderStatus !== orderStatus.OrderDelivered"
                                 class="btn btn-primary mr-2" (click)="openQrCode(order)"><i
                                     class="fas fa-qrcode"></i></button>
-                            <button [disabled]="order.orderStatus !== orderStatus.OrderDelivered"
+                            <button *ngIf="environment.ORDER_PRINT"
+                                [disabled]="order.orderStatus !== orderStatus.OrderDelivered"
                                 class="btn btn-primary mr-2" (click)="printConfirm([order])"><i
                                     class="fas fa-print"></i></button>
-                            <button
+                            <button *ngIf="environment.ORDER_CANCEL"
                                 [disabled]="order.orderStatus !== orderStatus.OrderDelivered && order.orderStatus === orderStatus.OrderReturned"
                                 class="btn btn-primary" (click)="cancelConfirm([order])"><i
                                     class="fas fa-trash-alt"></i></button>

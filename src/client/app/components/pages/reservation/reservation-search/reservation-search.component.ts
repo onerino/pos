@@ -7,8 +7,10 @@ import { select, Store } from '@ngrx/store';
 import * as moment from 'moment';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 import { getTicketPrice } from '../../../../functions';
 import { IReservationSearchConditions } from '../../../../models';
+import { DownloadService } from '../../../../services';
 import { reservationAction } from '../../../../store/actions';
 import * as reducers from '../../../../store/reducers';
 import { ReservationDetailModalComponent } from '../../../parts';
@@ -21,6 +23,7 @@ import { ReservationDetailModalComponent } from '../../../parts';
 export class ReservationSearchComponent implements OnInit {
 
     public isLoading: Observable<boolean>;
+    public isDownload: boolean;
     public error: Observable<string | null>;
     public reservation: Observable<reducers.IReservationState>;
     public user: Observable<reducers.IUserState>;
@@ -30,15 +33,18 @@ export class ReservationSearchComponent implements OnInit {
     public confirmedConditions: IReservationSearchConditions;
     public reservationStatus = factory.chevre.reservationStatusType;
     public getTicketPrice = getTicketPrice;
+    public environment = environment;
 
     constructor(
         private store: Store<reducers.IReservationState>,
         private actions: Actions,
         private modal: NgbModal,
-        private router: Router
+        private router: Router,
+        private download: DownloadService
     ) { }
 
     public ngOnInit() {
+        this.isDownload = false;
         this.isLoading = this.store.pipe(select(reducers.getLoading));
         this.error = this.store.pipe(select(reducers.getError));
         this.reservation = this.store.pipe(select(reducers.getReservation));
@@ -58,25 +64,14 @@ export class ReservationSearchComponent implements OnInit {
     }
 
     /**
-     * 検索
+     * 検索パラメータへ変換
      */
-    public reservationSearch(changeConditions: boolean) {
-        if (changeConditions) {
-            this.confirmedConditions = {
-                reservationDateFrom: this.conditions.reservationDateFrom,
-                reservationDateThrough: this.conditions.reservationDateThrough,
-                eventStartDateFrom: this.conditions.eventStartDateFrom,
-                eventStartDateThrough: this.conditions.eventStartDateThrough,
-                id: this.conditions.id,
-                reservationNumber: this.conditions.reservationNumber,
-                reservationStatus: this.conditions.reservationStatus,
-                page: 1
-            };
-        }
-        this.user.subscribe((_user) => {
-            this.store.dispatch(new reservationAction.Search({
-                params: {
+    public async convertToSearchParams() {
+        return new Promise<factory.chevre.reservation.ISearchConditions<factory.chevre.reservationType.EventReservation>>((resolve) => {
+            this.user.subscribe(() => {
+                const params: factory.chevre.reservation.ISearchConditions<factory.chevre.reservationType.EventReservation> = {
                     typeOf: factory.chevre.reservationType.EventReservation,
+                    project: { ids: [environment.PROJECT_ID] },
                     // seller: {
                     //     typeOf: (user.seller === undefined)
                     //         ? undefined : user.seller.typeOf,
@@ -104,9 +99,31 @@ export class ReservationSearchComponent implements OnInit {
                     sort: {
                         // reservationDate: factory.sortType.Descending
                     }
-                }
-            }));
-        }).unsubscribe();
+                };
+                resolve(params);
+            }).unsubscribe();
+        });
+    }
+
+    /**
+     * 検索
+     */
+    public reservationSearch(changeConditions: boolean) {
+        if (changeConditions) {
+            this.confirmedConditions = {
+                reservationDateFrom: this.conditions.reservationDateFrom,
+                reservationDateThrough: this.conditions.reservationDateThrough,
+                eventStartDateFrom: this.conditions.eventStartDateFrom,
+                eventStartDateThrough: this.conditions.eventStartDateThrough,
+                id: this.conditions.id,
+                reservationNumber: this.conditions.reservationNumber,
+                reservationStatus: this.conditions.reservationStatus,
+                page: 1
+            };
+        }
+        this.convertToSearchParams().then((params) => {
+            this.store.dispatch(new reservationAction.Search({ params }));
+        });
 
 
         const success = this.actions.pipe(
@@ -132,6 +149,20 @@ export class ReservationSearchComponent implements OnInit {
             size: 'lg'
         });
         modalRef.componentInstance.reservation = reservation;
+    }
+
+    /**
+     * CSVダウンロード
+     */
+    public async downloadCsv() {
+        this.isDownload = true;
+        try {
+            const params = await this.convertToSearchParams();
+            await this.download.reservation(params);
+        } catch (error) {
+            console.error(error);
+        }
+        this.isDownload = false;
     }
 
 }

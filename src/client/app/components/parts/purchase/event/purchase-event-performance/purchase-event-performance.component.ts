@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { factory } from '@cinerino/api-javascript-client';
 import * as moment from 'moment';
 import { SwiperComponent, SwiperConfigInterface, SwiperDirective } from 'ngx-swiper-wrapper';
+import { environment } from '../../../../../../environments/environment';
 import { IScreeningEventWork, isSales, isScheduleStatusThreshold } from '../../../../../functions';
 
 @Component({
@@ -19,6 +20,8 @@ export class PurchaseEventPerformanceComponent implements OnInit {
     public isScheduleStatusThreshold = isScheduleStatusThreshold;
     public isSales = isSales;
     public swiperConfig: SwiperConfigInterface;
+    public environment = environment;
+
     constructor() { }
 
     public ngOnInit() {
