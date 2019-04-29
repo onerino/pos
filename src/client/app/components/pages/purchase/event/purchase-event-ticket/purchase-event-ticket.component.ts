@@ -164,11 +164,45 @@ export class PurchaseEventTicketComponent implements OnInit, OnDestroy {
             modalRef.componentInstance.screeningEventTicketOffers = purchase.screeningEventTicketOffers;
             modalRef.componentInstance.screeningEvent = purchase.screeningEvent;
             modalRef.result.then((reservationTickets: IReservationTicket[]) => {
-                this.temporaryReservation(reservationTickets);
+                this.getScreeningEventOffers(reservationTickets);
             }).catch(() => { });
         }).unsubscribe();
     }
 
+    /**
+     * 空席情報取得
+     */
+    private getScreeningEventOffers(reservationTickets: IReservationTicket[]) {
+        this.purchase.subscribe((purchase) => {
+            if (purchase.screeningEvent === undefined) {
+                this.router.navigate(['/error']);
+                return;
+            }
+            const screeningEvent = purchase.screeningEvent;
+            this.store.dispatch(new purchaseAction.GetScreeningEventOffers({ screeningEvent }));
+        }).unsubscribe();
+        const success = this.actions.pipe(
+            ofType(purchaseAction.ActionTypes.GetScreeningEventOffersSuccess),
+            tap(() => {
+                this.temporaryReservation(reservationTickets);
+            })
+        );
+        const fail = this.actions.pipe(
+            ofType(purchaseAction.ActionTypes.GetScreeningEventOffersFail),
+            tap(() => {
+                this.util.openAlert({
+                    title: this.translate.instant('common.error'),
+                    body: this.translate.instant('purchase.event.ticket.alert.getScreeningEventOffers')
+                });
+            })
+        );
+        race(success, fail).pipe(take(1)).subscribe();
+    }
+
+    /**
+     * 仮予約
+     * @param reservationTickets
+     */
     private temporaryReservation(reservationTickets: IReservationTicket[]) {
         this.purchase.subscribe((purchase) => {
             if (purchase.transaction === undefined
@@ -178,9 +212,11 @@ export class PurchaseEventTicketComponent implements OnInit, OnDestroy {
             }
             const transaction = purchase.transaction;
             const screeningEvent = purchase.screeningEvent;
+            const screeningEventOffers = purchase.screeningEventOffers;
             this.store.dispatch(new purchaseAction.TemporaryReservationFreeSeat({
                 transaction,
                 screeningEvent,
+                screeningEventOffers,
                 reservationTickets
             }));
         }).unsubscribe();
