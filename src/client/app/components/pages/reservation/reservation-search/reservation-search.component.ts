@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { factory } from '@cinerino/api-javascript-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import * as moment from 'moment';
+import { BsModalService } from 'ngx-bootstrap';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
@@ -38,7 +38,7 @@ export class ReservationSearchComponent implements OnInit {
     constructor(
         private store: Store<reducers.IReservationState>,
         private actions: Actions,
-        private modal: NgbModal,
+        private modal: BsModalService,
         private router: Router,
         private download: DownloadService
     ) { }
@@ -108,7 +108,10 @@ export class ReservationSearchComponent implements OnInit {
     /**
      * 検索
      */
-    public reservationSearch(changeConditions: boolean) {
+    public reservationSearch(changeConditions: boolean, event?: { page: number }) {
+        if (event !== undefined) {
+            this.confirmedConditions.page = event.page;
+        }
         if (changeConditions) {
             this.confirmedConditions = {
                 reservationDateFrom: this.conditions.reservationDateFrom,
@@ -144,11 +147,10 @@ export class ReservationSearchComponent implements OnInit {
      * 詳細を表示
      */
     public openDetail(reservation: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>) {
-        const modalRef = this.modal.open(ReservationDetailModalComponent, {
-            centered: true,
-            size: 'lg'
+        this.modal.show(ReservationDetailModalComponent, {
+            class: 'modal-dialog-centered modal-lg',
+            initialState: { reservation }
         });
-        modalRef.componentInstance.reservation = reservation;
     }
 
     /**

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { factory } from '@cinerino/api-javascript-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
+import { BsModalService } from 'ngx-bootstrap';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
@@ -41,7 +41,7 @@ export class OrderSearchComponent implements OnInit {
     constructor(
         private store: Store<reducers.IOrderState>,
         private actions: Actions,
-        private modal: NgbModal,
+        private modal: BsModalService,
         private router: Router,
         private util: UtilService,
         private translate: TranslateService,
@@ -135,8 +135,11 @@ export class OrderSearchComponent implements OnInit {
     /**
      * 検索
      */
-    public orderSearch(changeConditions: boolean) {
+    public orderSearch(changeConditions: boolean, event?: { page: number }) {
         this.selectedOrders = [];
+        if (event !== undefined) {
+            this.confirmedConditions.page = event.page;
+        }
         if (changeConditions) {
             this.confirmedConditions = {
                 orderDateFrom: this.conditions.orderDateFrom,
@@ -201,11 +204,10 @@ export class OrderSearchComponent implements OnInit {
      * 詳細を表示
      */
     public openDetail(order: factory.order.IOrder) {
-        const modalRef = this.modal.open(OrderDetailModalComponent, {
-            centered: true,
-            size: 'lg'
+        this.modal.show(OrderDetailModalComponent, {
+            class: 'modal-dialog-centered modal-lg',
+            initialState: { order }
         });
-        modalRef.componentInstance.order = order;
     }
 
     /**
@@ -325,10 +327,10 @@ export class OrderSearchComponent implements OnInit {
                     if (authorizeOrder === undefined) {
                         return;
                     }
-                    const modalRef = this.modal.open(QrCodeModalComponent, {
-                        centered: true
+                    this.modal.show(QrCodeModalComponent, {
+                        class: 'modal-dialog-centered',
+                        initialState: { order: authorizeOrder },
                     });
-                    modalRef.componentInstance.order = authorizeOrder;
                 }).unsubscribe();
             })
         );

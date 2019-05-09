@@ -4,6 +4,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { SERVICE_UNAVAILABLE, TOO_MANY_REQUESTS } from 'http-status';
 import * as moment from 'moment';
+import { BsLocaleService } from 'ngx-bootstrap';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
@@ -24,12 +25,13 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
     public screeningWorkEvents: IScreeningEventWork[];
     public moment: typeof moment = moment;
     private updateTimer: any;
-    public scheduleDate: string;
+    public scheduleDate: Date;
 
     constructor(
         private store: Store<reducers.IState>,
         private actions: Actions,
-        private router: Router
+        private router: Router,
+        private localeService: BsLocaleService
     ) { }
 
     /**
@@ -41,10 +43,10 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
         this.master = this.store.pipe(select(reducers.getMaster));
         this.error = this.store.pipe(select(reducers.getError));
         this.screeningWorkEvents = [];
-        if (this.scheduleDate === undefined || this.scheduleDate === '') {
+        if (this.scheduleDate === undefined) {
             this.scheduleDate = moment()
                 .add(environment.PURCHASE_SCHEDULE_DEFAULT_SELECTED_DATE, 'day')
-                .format('YYYY-MM-DD');
+                .toDate();
         }
         this.selectDate();
     }
@@ -72,19 +74,22 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
     /**
      * 日付選択
      */
-    public selectDate() {
+    public selectDate(date?: Date | null) {
+        if (date !== undefined && date !== null) {
+            this.scheduleDate = date;
+        }
         this.user.subscribe((user) => {
             const seller = user.seller;
             if (seller === undefined) {
                 this.router.navigate(['/error']);
                 return;
             }
-            if (this.scheduleDate === '') {
+            if (this.scheduleDate === undefined || this.scheduleDate === null) {
                 this.scheduleDate = moment()
                     .add(environment.PURCHASE_SCHEDULE_DEFAULT_SELECTED_DATE, 'day')
-                    .format('YYYY-MM-DD');
+                    .toDate();
             }
-            const scheduleDate = this.scheduleDate;
+            const scheduleDate =  moment(this.scheduleDate).format('YYYY-MM-DD');
             this.store.dispatch(new purchaseAction.SelectScheduleDate({ scheduleDate }));
             this.store.dispatch(new masterAction.GetSchedule({
                 superEvent: {
@@ -191,6 +196,12 @@ export class PurchaseEventScheduleComponent implements OnInit, OnDestroy {
             }
             this.router.navigate(['/error']);
         }
+    }
+
+    public setDatePicker() {
+        this.user.subscribe((user) => {
+            this.localeService.use(user.language);
+        }).unsubscribe();
     }
 
 }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { factory } from '@cinerino/api-javascript-client';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { BsModalRef } from 'ngx-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { getTicketPrice } from '../../../functions';
 
@@ -17,7 +17,7 @@ export class ReservationDetailModalComponent implements OnInit {
     public environment = environment;
 
     constructor(
-        public activeModal: NgbActiveModal,
+        public modal: BsModalRef,
         private elementRef: ElementRef
     ) { }
 

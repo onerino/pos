@@ -72,9 +72,12 @@
         </div>
         <div class="d-md-flex align-items-center justify-content-end mb-4">
             <div class="text-md-right text-center mb-3 mb-md-0 reservation-2">
-                <ngb-pagination class="d-inline-block" [(page)]="confirmedConditions.page"
-                    [collectionSize]="(reservation | async).pageCount * 10" [maxSize]="3" [boundaryLinks]="false"
-                    (pageChange)="reservationSearch(false)"></ngb-pagination>
+                <div class="d-inline-block">
+                    <pagination [(ngModel)]="confirmedConditions.page"
+                        [totalItems]="(reservation | async).pageCount * 10" [maxSize]="5" [boundaryLinks]="false"
+                        previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"
+                        (pageChanged)="reservationSearch(false, $event)"></pagination>
+                </div>
             </div>
         </div>
 

@@ -86,9 +86,11 @@
         </div>
         <div class="d-md-flex align-items-center justify-content-between mb-4">
             <div class="text-md-right text-center mb-3 mb-md-0 order-2">
-                <ngb-pagination class="d-inline-block" [(page)]="confirmedConditions.page"
-                    [collectionSize]="(order | async).pageCount * 10" [maxSize]="3" [boundaryLinks]="false"
-                    (pageChange)="orderSearch(false)"></ngb-pagination>
+                <div class="d-inline-block">
+                    <pagination [(ngModel)]="confirmedConditions.page" [totalItems]="(order | async).pageCount * 10"
+                        [maxSize]="5" [boundaryLinks]="false" previousText="&lsaquo;" nextText="&rsaquo;"
+                        firstText="&laquo;" lastText="&raquo;" (pageChanged)="orderSearch(false, $event)"></pagination>
+                </div>
             </div>
 
             <div class="form-group text-center text-md-left mb-3 mb-md-0 order-1">

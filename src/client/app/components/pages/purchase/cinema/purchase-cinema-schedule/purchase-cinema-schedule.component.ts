@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { factory } from '@cinerino/api-javascript-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Actions, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { SERVICE_UNAVAILABLE, TOO_MANY_REQUESTS } from 'http-status';
 import * as moment from 'moment';
+import { BsModalService } from 'ngx-bootstrap';
 import { Observable, race } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
@@ -36,7 +36,7 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
         private actions: Actions,
         private router: Router,
         private util: UtilService,
-        private modal: NgbModal,
+        private modal: BsModalService,
         private translate: TranslateService
     ) { }
 
@@ -230,14 +230,15 @@ export class PurchaseCinemaScheduleComponent implements OnInit, OnDestroy {
     public openTransactionModal() {
         this.purchase.subscribe((purchase) => {
             this.user.subscribe((user) => {
-                const modalRef = this.modal.open(PurchaseTransactionModalComponent, {
-                    centered: true
+                this.modal.show(PurchaseTransactionModalComponent, {
+                    class: 'modal-dialog-centered',
+                    initialState: {
+                        purchase, user,
+                        cb: () => {
+                            this.router.navigate(['/purchase/cinema/seat']);
+                        }
+                    }
                 });
-                modalRef.componentInstance.purchase = purchase;
-                modalRef.componentInstance.user = user;
-                modalRef.result.then(() => {
-                    this.router.navigate(['/purchase/cinema/seat']);
-                }).catch(() => { });
             }).unsubscribe();
         }).unsubscribe();
     }

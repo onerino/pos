@@ -41,6 +41,15 @@
             },
             "development": {
               "outputPath": "./dist/client/development",
+              "fileReplacements": [
+                {
+                  "replace": "src/client/environments/environment.ts",
+                  "with": "src/client/environments/environment.development.ts"
+                }
+              ]
+            },
+            "test": {
+              "outputPath": "./dist/client/test",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": true,
@@ -53,7 +62,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/client/environments/environment.ts",
-                  "with": "src/client/environments/environment.development.ts"
+                  "with": "src/client/environments/environment.test.ts"
                 }
               ]
             }

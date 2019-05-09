@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { BsModalRef } from 'ngx-bootstrap';
 
 @Component({
     selector: 'app-confirm-modal',
@@ -10,9 +10,10 @@ export class ConfirmModalComponent implements OnInit {
 
     @Input() public title: string;
     @Input() public body: string;
+    @Input() public cb: Function;
 
     constructor(
-        public activeModal: NgbActiveModal,
+        public modal: BsModalRef,
         private elementRef: ElementRef
     ) { }
 
@@ -21,6 +22,11 @@ export class ConfirmModalComponent implements OnInit {
         setTimeout(() => {
             element.scrollTop = 0;
         }, 0);
+    }
+
+    public close() {
+        this.modal.hide();
+        this.cb();
     }
 
 }
